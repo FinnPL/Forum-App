@@ -11,6 +11,12 @@ class MyApp extends StatelessWidget {
       title: 'GHSE Forum',
       theme: ThemeData(
         primarySwatch: Palette.BlueToDark,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor: Palette.OrangeToDark,
+          selectionColor: Palette.OrangeToDark,
+          selectionHandleColor: Palette.OrangeToDark,
+        ),
       ),
       home: HomePage(),
     );
