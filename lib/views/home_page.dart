@@ -27,7 +27,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   getData() async {
-    posts = await RemoteService().getPosts();
+    //var token  = await RemoteService().register("Suiuigt787Sui333dsasdsadsad","h3ggh");
+    var token = await RemoteService().getToken('Suiuigt787Sui333dsasdsadsad', 'h3ggh');
+    posts = await RemoteService().getPostsPage(token!, 0);
     if (posts != null) {
       setState(() {
         isLoaded = true;
@@ -60,9 +62,9 @@ class _HomePageState extends State<HomePage> {
           itemBuilder: (context, index) {
             final post = posts?[index];
             final postTitle = post?.title;
-            final postContent = post?.body;
-            final authorName = post?.userId;
-            final postDate = post?.id;
+            final postContent = post?.content;
+            final authorName = post?.userName ;
+            final postDate = post?.date.toString();
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Container(
@@ -114,13 +116,13 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             );
-
           },
         ),
         replacement: const Center(
           child: CircularProgressIndicator(),
         ),
       ),
+    backgroundColor: Palette.BlueToDark[200],
     );
   }
 }

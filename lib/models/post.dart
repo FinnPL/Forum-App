@@ -10,28 +10,36 @@ String postToJson(List<Post> data) => json.encode(List<dynamic>.from(data.map((x
 
 class Post {
   Post({
-    required this.userId,
     required this.id,
     required this.title,
-    this.body,
+    required this.content,
+    required this.userId,
+    required this.userName,
+    required this.date,
   });
 
-  int userId;
-  int id;
+  String id;
   String title;
-  String? body;
+  String content;
+  String userId;
+  String userName;
+  DateTime date;
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
-    userId: json["userId"],
     id: json["id"],
     title: json["title"],
-    body: json["body"],
+    content: json["content"],
+    userId: json["user_id"],
+    userName: json["user_name"],
+    date: DateTime.parse(json["date"]),
   );
 
   Map<String, dynamic> toJson() => {
-    "userId": userId,
     "id": id,
     "title": title,
-    "body": body,
+    "content": content,
+    "user_id": userId,
+    "user_name": userName,
+    "date": date.toIso8601String(),
   };
 }
