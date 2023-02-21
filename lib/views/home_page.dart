@@ -6,6 +6,16 @@ import 'package:forum/palette.dart';
 import 'package:forum/services/remote_services.dart';
 
 RemoteService remoteService = new RemoteService();
+bool isLoggedIn = false;
+
+Future<void> checkLogin() async {
+  isLoggedIn = await remoteService.isLoggedIn();
+  const HomePage();
+}
+
+
+
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -25,11 +35,13 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     //fetch data from API
-    getData();
+    if(isLoggedIn){
+      getData();
+    }
   }
 
   getData() async {
-    await remoteService.getToken('HerrSueer', '12123').whenComplete(() async => posts = await remoteService.getPostsPage(0));
+     posts = await remoteService.getPostsPage(0);
     if (posts != null) {
       setState(() {
         isLoaded = true;
@@ -46,6 +58,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    print(remoteService.isLoggedIn());
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -62,11 +75,12 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         actions: [
-          // Navigate to the Search Screen
           IconButton(
               onPressed: () => Navigator.of(context)
                   .push(MaterialPageRoute(builder: (_) => const SearchPage())),
-              icon: const Icon(Icons.search))
+              icon: const Icon(Icons.search)),
+          IconButton(onPressed: () => Navigator.of(context)
+              .push(MaterialPageRoute(builder: (_) =>  AccountPage())), icon: const Icon(Icons.person)),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -87,7 +101,13 @@ class _HomePageState extends State<HomePage> {
             posts = value;
           }));
         },
-    backgroundColor: Palette.BlueToDark[200], child:Visibility(
+    backgroundColor: Palette.BlueToDark[200], child:
+      Visibility(
+          visible: isLoggedIn,
+          replacement: LoginPage(),
+      child:
+
+      Visibility(
         visible: isLoaded,
         replacement: const Center(
           child: CircularProgressIndicator(),
@@ -112,6 +132,8 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     ),
+      ),
+
       backgroundColor: Palette.BlueToDark,
     );
   }
@@ -509,7 +531,7 @@ class PostWidget extends StatelessWidget {
           horizontal: 16, vertical: 8),
       child: Container(
         decoration: BoxDecoration(
-          color: Palette.BlueToLight[700],
+          color: Palette.BlueToLight[400],
           borderRadius: BorderRadius.circular(8),
         ),
         child: ListTile(
@@ -547,7 +569,7 @@ class PostWidget extends StatelessWidget {
           ),
           trailing:
           const Icon(
-              Icons.arrow_forward_ios, color: Palette.OrangeToDark),
+              Icons.arrow_forward_ios, color: Palette.BlueToDark),
 
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
@@ -557,6 +579,256 @@ class PostWidget extends StatelessWidget {
                   ),
             ));
           },
+        ),
+      ),
+    );
+  }
+}
+
+class AccountPage extends StatefulWidget {
+  @override
+  _AccountPageState createState() => _AccountPageState();
+}
+
+class _AccountPageState extends State<AccountPage>{
+
+  @override
+  Widget build(BuildContext context) {
+    checkLogin();
+    if(isLoggedIn){
+      return Scaffold(
+        appBar: AppBar(
+          title: Row(
+            children: <Widget>[
+              Image.asset(
+                'assets/images/ghse_logo.png',
+                fit: BoxFit.contain,
+                height: 32,
+              ),
+              const Text(
+                '  GHSE Forum',
+                style: TextStyle(color: Palette.OrangeToLight),
+              ),
+            ],
+          ),
+        ),
+        body: Container(
+          color: Palette.BlueToDark,
+          child: Column(
+            children: [
+              Container(
+                color: Palette.BlueToLight,
+                padding: const EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 16),
+                child: Row(
+                  children:  const [
+                    Text(
+                      'Account',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Palette.OrangeToDark,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 16),
+                      ElevatedButton.icon(
+                          onPressed: () async {
+                            await remoteService.logout();
+                            isLoggedIn = false;
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage()));
+                          },
+                          icon: Icon(Icons.logout), label: Text('Logout')
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+  } else{
+      return Scaffold(
+        appBar: AppBar(
+          title: Row(
+            children: <Widget>[
+              Image.asset(
+                'assets/images/ghse_logo.png',
+                fit: BoxFit.contain,
+                height: 32,
+              ),
+              const Text(
+                '  GHSE Forum',
+                style: TextStyle(color: Palette.OrangeToLight),
+              ),
+            ],
+          ),
+        ),
+        body: Container(
+          color: Palette.BlueToDark,
+          child: Column(
+            children: [
+              Container(
+                color: Palette.BlueToLight,
+                padding: const EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 16),
+                child: Row(
+                  children:  const [
+                    Text(
+                      'Account',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Palette.OrangeToDark,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 16),
+                      ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginPage()));
+                          },
+                          icon: Icon(Icons.login), label: Text('Login')
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => RegisterPage()));
+                          },
+                          icon: Icon(Icons.person_add), label: Text('Register')
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+  }
+}
+
+class RegisterPage extends StatefulWidget {
+  @override
+  _RegisterPageState createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage>{
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    throw UnimplementedError();
+  }
+
+
+}
+
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage>{
+  final user_controller = TextEditingController();
+  final password_controller = TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    user_controller.dispose();
+    password_controller.dispose();
+    super.dispose();
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        color: Palette.BlueToDark,
+        child: Column(
+          children: [
+            Container(
+              color: Palette.BlueToLight,
+              padding: const EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 16),
+              child: Row(
+                children:  const [
+                  Text(
+                    'Login',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Palette.OrangeToDark,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: user_controller,
+                      decoration: const InputDecoration(
+                        labelText: 'Username',
+                        labelStyle: TextStyle(color: Palette.OrangeToDark,fontSize: 20),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Palette.OrangeToDark),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Palette.OrangeToDark),
+                        ),
+                      ),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: password_controller,
+                      decoration: const InputDecoration(
+                        labelText: 'Password',
+                        labelStyle: TextStyle(color: Palette.OrangeToDark,fontSize: 20),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Palette.OrangeToDark),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Palette.OrangeToDark),
+                        ),
+                      ),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                        onPressed: () async {
+                          if(user_controller.text.isEmpty || password_controller.text.isEmpty){
+                            return;
+                          } else{
+                            await remoteService.getToken(user_controller.text, password_controller.text).then((value) =>checkLogin().then((value) => Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage()))));
+                          }
+                        },
+                        icon: Icon(Icons.login), label: Text('Login')
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -45,6 +45,7 @@ class RemoteService {
   }
 
     Future<bool> getToken(String user_name, String password) async {
+      print('getToken called');
       var url = Uri.parse('${api_url}auth/authenticate');
       final body = jsonEncode(Auth(userName: user_name, password: password).toJson());
 
@@ -94,6 +95,21 @@ class RemoteService {
       var json = response.body;
       return postFromJson(json);
     }
+  }
+
+  Future<bool> isLoggedIn() async {
+    print('Checking if logged in');
+    var Token = await storage.readAll().then((value) => value['token']);
+    print('Tokkkkk: $Token');
+    if ( Token != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  logout() async {
+    await storage.deleteAll().then((value) => print('Logged out'));
   }
 
 

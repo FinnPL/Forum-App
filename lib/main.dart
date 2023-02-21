@@ -7,6 +7,7 @@ void main() =>runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    checkLogin();
     return MaterialApp(
       title: 'GHSE Forum',
       theme: ThemeData(
@@ -18,8 +19,7 @@ class MyApp extends StatelessWidget {
           selectionHandleColor: Palette.OrangeToDark,
         ),
       ),
-      home: HomePage(),
+      home:  const HomePage(),
     );
   }
 }
-
