@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   getData() async {
-    await remoteService.getToken('Suiuigt787Sui333dsasdsadsad', 'h3ggh').whenComplete(() async => posts = await remoteService.getPostsPage(0));
+    await remoteService.getToken('HerrSueer', '12123').whenComplete(() async => posts = await remoteService.getPostsPage(0));
     if (posts != null) {
       setState(() {
         isLoaded = true;

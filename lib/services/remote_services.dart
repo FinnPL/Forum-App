@@ -63,7 +63,7 @@ class RemoteService {
 
   Future<void> addPost({required String title, required String content}) async {
       var url = Uri.parse('${api_url}post/add');
-      var Token = storage.read(key: 'token');
+      var Token = await storage.readAll().then((value) => value['token']);
       headers.addAll({'Authorization': 'Bearer $Token'});
 
       final body = jsonEncode(
