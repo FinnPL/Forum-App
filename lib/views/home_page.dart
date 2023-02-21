@@ -19,6 +19,7 @@ class _HomePageState extends State<HomePage> {
   List<Post>? posts;
   var isLoaded = false;
   int page = 0;
+  bool end = false;
 
   @override
   void initState() {
@@ -39,6 +40,7 @@ class _HomePageState extends State<HomePage> {
       page++;
       remoteService.getPostsPage(page).then((value) => setState(() {
         posts!.addAll(value!);
+        if(value.isEmpty) end = true;
       }));
     }
 
@@ -69,7 +71,16 @@ class _HomePageState extends State<HomePage> {
         child: const Icon(Icons.add),
         backgroundColor: Palette.OrangeToDark,
       ),
-      body: Visibility(
+      body:
+      RefreshIndicator(
+        onRefresh: () async {
+          page = 0;
+          end = false;
+          await remoteService.getPostsPage(0).then((value) => setState(() {
+            posts = value;
+          }));
+        },
+    backgroundColor: Palette.BlueToDark[200], child:Visibility(
         visible: isLoaded,
         replacement: const Center(
           child: CircularProgressIndicator(),
@@ -79,16 +90,14 @@ class _HomePageState extends State<HomePage> {
 
             int? post_length = posts?.length;
 
-            if(index >= post_length!){
-              addNextPage();
-              if(index == post_length) {
+              if(index == post_length&& !end) {
+                addNextPage();
                 return Container(
                   padding: const EdgeInsets.all(16),
                   child: const Center(
                     child: CircularProgressIndicator(),
                   ),
                 );
-              }
             } else if(index < post_length!){
               final post = posts?[index];
               final postTitle = post?.title;
@@ -156,7 +165,7 @@ class _HomePageState extends State<HomePage> {
           },
         ),
       ),
-    backgroundColor: Palette.BlueToDark[200],
+    ),
     );
   }
 }
@@ -336,9 +345,17 @@ class _AddPostWidgetState extends State<AddPostWidget>{
                       const SizedBox(height: 16),
                       ElevatedButton.icon(
                           onPressed: () async {
+                            var titel = title_controller.text;
+                            var content = content_controller.text;
+                            if(titel.isEmpty|content.isEmpty){
+                              //show error message
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Please fill in all fields')));
+                              return;
+                            }
                             remoteService.addPost(
-                                  title: title_controller.text,
-                                  content: content_controller.text,
+                                  title: titel,
+                                  content: content,
                               );
                               //return to home page
                               Navigator.of(context).pop();
