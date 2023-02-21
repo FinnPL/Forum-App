@@ -85,5 +85,16 @@ class RemoteService {
       }
   }
 
+  Future<List<Post>?> search(String text,int page) async {
+    var url = Uri.parse('${api_url}post/search/$text/$page');
+    var Token = await storage.readAll().then((value) => value['token']);
+    headers.addAll({'Authorization': 'Bearer $Token'});
+    var response = await http.get(url,headers: headers);
+    if (response.statusCode == 200) {
+      var json = response.body;
+      return postFromJson(json);
+    }
+  }
+
 
 }

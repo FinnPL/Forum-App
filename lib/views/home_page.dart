@@ -61,6 +61,13 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
+        actions: [
+          // Navigate to the Search Screen
+          IconButton(
+              onPressed: () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (_) => const SearchPage())),
+              icon: const Icon(Icons.search))
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -87,7 +94,6 @@ class _HomePageState extends State<HomePage> {
         ),
         child: ListView.builder(
           itemBuilder: (context, index) {
-
             int? post_length = posts?.length;
 
               if(index == post_length&& !end) {
@@ -99,92 +105,23 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
             } else if(index < post_length!){
-              final post = posts?[index];
-              final postTitle = post?.title;
-              final postContent = post?.content;
-              final authorName = post?.userName;
-              final postDate = post?.date.toString();
-              return Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 8),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Palette.BlueToLight[700],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 8, horizontal: 16),
-                    title: Text(
-                      postTitle ?? '',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
-                    ),
-                    subtitle: Row(
-                      children: [
-                        const Icon(Icons.access_time, size: 16, color: Colors
-                            .black54),
-                        const SizedBox(width: 4),
-                        Text(
-                          postDate.toString(),
-                          style: const TextStyle(color: Colors.black54),
-                        ),
-                        const SizedBox(width: 16),
-                        const Icon(Icons.account_circle, size: 16, color: Colors
-                            .black54),
-                        const SizedBox(width: 4),
-                        Text(
-                          authorName.toString(),
-                          style: const TextStyle(color: Colors.black54),
-                        ),
-                      ],
-                    ),
-                    trailing:
-                    const Icon(
-                        Icons.arrow_forward_ios, color: Palette.OrangeToDark),
-
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (_) =>
-                            FullScreenPostWidget(
-                              postTitle: postTitle,
-                              postContent: postContent,
-                              authorName: authorName.toString(),
-                              postDate: postDate.toString(),
-                            ),
-                      ));
-                    },
-                  ),
-                ),
-              );
+              final post = posts![index];
+              return PostWidget(post: post);
             }
           },
         ),
       ),
     ),
+      backgroundColor: Palette.BlueToDark,
     );
   }
 }
 
 
 class FullScreenPostWidget extends StatelessWidget {
-   String? postTitle;
-   String? postContent;
-   String? authorName;
-   String? postDate;
+  final Post post;
 
-  FullScreenPostWidget({super.key,
-    required this.postTitle,
-    required this.postContent,
-    required this.authorName,
-    required this.postDate,
-  });
-
-
+  const FullScreenPostWidget({Key? key, required this.post});
 
   @override
   Widget build(BuildContext context) {
@@ -204,7 +141,7 @@ class FullScreenPostWidget extends StatelessWidget {
                   onPressed: () => Navigator.of(context).pop(),
                 ),
                 Text(
-                  postTitle!,
+                  post.title,
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -221,11 +158,12 @@ class FullScreenPostWidget extends StatelessWidget {
               children: [
                 Icon(Icons.person, color: Palette.YellowToDark[100]),
                 const SizedBox(width: 8),
-                Text(authorName!, style: TextStyle(color: Palette.YellowToDark[100])),
+                Text(post.userName, style: TextStyle(color: Palette.YellowToDark[100])),
                 const SizedBox(width: 16),
-                Icon(Icons.calendar_today, color: Palette.YellowToDark[100]),
+                Icon(Icons.access_time, color: Palette.YellowToDark[100]),
                 const SizedBox(width: 8),
-                Text(postDate!, style: TextStyle(color: Palette.YellowToDark[100])),
+                Text('${post.date.day}.${post.date.month}.${post.date.year} - ${post.date.hour}:${post.date.minute}',
+                    style: TextStyle(color: Palette.YellowToDark[100])),
               ],
             ),
           ),
@@ -234,7 +172,7 @@ class FullScreenPostWidget extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: SingleChildScrollView(
                 child: Text(
-                  postContent!,
+                  post.content,
                   style: const TextStyle(
                     fontSize: 20,
                     color: Colors.white,
@@ -295,8 +233,8 @@ class _AddPostWidgetState extends State<AddPostWidget>{
               color: Palette.BlueToLight,
               padding: const EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 16),
               child: Row(
-                children: [
-                  const Text(
+                children: const [
+                  Text(
                     'Create a new post',
                     style: TextStyle(
                       fontSize: 24,
@@ -371,5 +309,256 @@ class _AddPostWidgetState extends State<AddPostWidget>{
       ),
     );
   }
+}
+class SearchPage extends StatefulWidget {
+  const SearchPage({Key? key}) : super(key: key);
 
+  @override
+  _SearchPageState createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<SearchPage>{
+   final search_controller = TextEditingController();
+   List<Post>? posts;
+
+   @override
+   void dispose() {
+     search_controller.dispose();
+     super.dispose();
+   }
+
+
+   @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          children: <Widget>[
+            Image.asset(
+              'assets/images/ghse_logo.png',
+              fit: BoxFit.contain,
+              height: 32,
+            ),
+            const Text(
+              '  GHSE Forum',
+              style: TextStyle(color: Palette.OrangeToLight),
+            ),
+          ],
+        ),
+      ),
+      body: Container(
+        color: Palette.BlueToDark,
+        child: Column(
+          children: [
+            Container(
+              color: Palette.BlueToLight,
+              padding: const EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 16),
+              child: Row(
+                children: const [
+                  Text(
+                    'Search for Posts',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Palette.OrangeToDark,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                       TextField(
+                        controller: search_controller,
+                        decoration: const InputDecoration(
+                          labelText: 'Search',
+                          labelStyle: TextStyle(color: Palette.OrangeToDark,fontSize: 20),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Palette.OrangeToDark),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Palette.OrangeToDark),
+                          ),
+                        ),
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton.icon(
+                          onPressed: () async {
+                          var page = 0;
+                          var search = search_controller.text;
+                          if(search.isEmpty){
+                            //show error message
+                            ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Please fill in all fields')));
+                            return;
+                          }
+                          posts = await remoteService.search(search, page);
+                          //show post page
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => PostPage(posts: posts,search: search)));
+                          },
+                          icon: Icon(Icons.search), label: Text('Search')
+                      ),
+                  ]),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    }
+  
+}
+
+class PostPage extends StatefulWidget {
+  final List<Post>? posts;
+  final String search;
+
+  const PostPage({Key? key, required this.posts, required this.search,}) : super(key: key);
+
+  @override
+  _PostPageState createState() => _PostPageState();
+}
+
+class _PostPageState extends State<PostPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          children: <Widget>[
+            Image.asset(
+              'assets/images/ghse_logo.png',
+              fit: BoxFit.contain,
+              height: 32,
+            ),
+            const Text(
+              '  GHSE Forum',
+              style: TextStyle(color: Palette.OrangeToLight),
+            ),
+          ],
+        ),
+      ),
+      body: Container(
+        color: Palette.BlueToDark,
+        child: Column(
+          children: [
+            Container(
+              color: Palette.BlueToLight,
+              padding: const EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 16),
+              child: Row(
+                children:  [
+                  Text(
+                    'Search Results for: ${widget.search}',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Palette.OrangeToDark,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: ListView.builder(
+                  itemCount: widget.posts!.length,
+                  itemBuilder: (context, index) {
+                    return PostWidget(post: widget.posts![index]);
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class PostWidget extends StatelessWidget {
+  final Post post;
+
+  const PostWidget({Key? key, required this.post});
+
+  Widget build(BuildContext context) {
+    String date;
+    if(post.date.isAfter(DateTime.now().subtract(const Duration(days: 1)))){
+      date = '${post.date.hour}:';
+      if(post.date.hour < 10){
+        date = '0$date';
+      }
+      if(post.date.minute < 10) {
+        date = '${date}0${post.date.minute}';
+      }else{
+        date = '$date${post.date.minute}';
+      }
+    }else{
+      date = '${post.date.day}/${post.date.month}/${post.date.year}';
+    } //💀
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+          horizontal: 16, vertical: 8),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Palette.BlueToLight[700],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+              vertical: 8, horizontal: 16),
+          title: Text(
+            post.title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+          subtitle: Row(
+            children: [
+
+              const Icon(Icons.account_circle, size: 16, color: Colors
+                  .black54),
+              const SizedBox(width: 4),
+              Text(
+                post.userName,
+                style: const TextStyle(color: Colors.black54),
+              ),
+              const SizedBox(width: 16),
+              const Icon(Icons.access_time, size: 16, color: Colors
+                  .black54),
+              const SizedBox(width: 4),
+
+              Text(
+                date,
+                style: const TextStyle(color: Colors.black54),
+              ),
+            ],
+          ),
+          trailing:
+          const Icon(
+              Icons.arrow_forward_ios, color: Palette.OrangeToDark),
+
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) =>
+                  FullScreenPostWidget(
+                    post: post,
+                  ),
+            ));
+          },
+        ),
+      ),
+    );
+  }
 }
