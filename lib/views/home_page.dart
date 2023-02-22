@@ -1,21 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:forum/models/post.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/services/remote_services.dart';
+import 'package:forum/views/login_page.dart';
 
 RemoteService remoteService = new RemoteService();
-bool isLoggedIn = false;
-
-Future<void> checkLogin() async {
-  isLoggedIn = await remoteService.isLoggedIn();
-  const HomePage();
-}
-
-
-
-
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -25,7 +18,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   List<Post>? posts;
   var isLoaded = false;
   int page = 0;
@@ -34,31 +26,29 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    //fetch data from API
-    if(isLoggedIn){
-      getData();
-    }
+    getData();
   }
 
   getData() async {
-     posts = await remoteService.getPostsPage(0);
+    posts = await remoteService.getPostsPage(0);
     if (posts != null) {
       setState(() {
         isLoaded = true;
       });
     }
   }
-    addNextPage(){
-      page++;
-      remoteService.getPostsPage(page).then((value) => setState(() {
-        posts!.addAll(value!);
-        if(value.isEmpty) end = true;
-      }));
-    }
+
+  addNextPage() {
+    page++;
+    remoteService.getPostsPage(page).then((value) => setState(() {
+          posts!.addAll(value!);
+          if (value.isEmpty) end = true;
+        }));
+  }
 
   @override
   Widget build(BuildContext context) {
-    print(remoteService.isLoggedIn());
+    print('build called');
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -79,8 +69,10 @@ class _HomePageState extends State<HomePage> {
               onPressed: () => Navigator.of(context)
                   .push(MaterialPageRoute(builder: (_) => const SearchPage())),
               icon: const Icon(Icons.search)),
-          IconButton(onPressed: () => Navigator.of(context)
-              .push(MaterialPageRoute(builder: (_) =>  AccountPage())), icon: const Icon(Icons.person)),
+          IconButton(
+              onPressed: () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (_) => AccountPage())),
+              icon: const Icon(Icons.person)),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -92,31 +84,25 @@ class _HomePageState extends State<HomePage> {
         child: const Icon(Icons.add),
         backgroundColor: Palette.OrangeToDark,
       ),
-      body:
-      RefreshIndicator(
+      body: RefreshIndicator(
         onRefresh: () async {
           page = 0;
           end = false;
           await remoteService.getPostsPage(0).then((value) => setState(() {
-            posts = value;
-          }));
+                posts = value;
+              }));
         },
-    backgroundColor: Palette.BlueToDark[200], child:
-      Visibility(
-          visible: isLoggedIn,
-          replacement: LoginPage(),
-      child:
+        backgroundColor: Palette.BlueToDark[200],
+        child: Visibility(
+          visible: isLoaded,
+          replacement: const Center(
+            child: CircularProgressIndicator(),
+          ),
+          child: ListView.builder(
+            itemBuilder: (context, index) {
+              int? post_length = posts?.length;
 
-      Visibility(
-        visible: isLoaded,
-        replacement: const Center(
-          child: CircularProgressIndicator(),
-        ),
-        child: ListView.builder(
-          itemBuilder: (context, index) {
-            int? post_length = posts?.length;
-
-              if(index == post_length&& !end) {
+              if (index == post_length && !end) {
                 addNextPage();
                 return Container(
                   padding: const EdgeInsets.all(16),
@@ -124,21 +110,18 @@ class _HomePageState extends State<HomePage> {
                     child: CircularProgressIndicator(),
                   ),
                 );
-            } else if(index < post_length!){
-              final post = posts![index];
-              return PostWidget(post: post);
-            }
-          },
+              } else if (index < post_length!) {
+                final post = posts![index];
+                return PostWidget(post: post);
+              }
+            },
+          ),
         ),
       ),
-    ),
-      ),
-
       backgroundColor: Palette.BlueToDark,
     );
   }
 }
-
 
 class FullScreenPostWidget extends StatelessWidget {
   final Post post;
@@ -180,11 +163,13 @@ class FullScreenPostWidget extends StatelessWidget {
               children: [
                 Icon(Icons.person, color: Palette.YellowToDark[100]),
                 const SizedBox(width: 8),
-                Text(post.userName, style: TextStyle(color: Palette.YellowToDark[100])),
+                Text(post.userName,
+                    style: TextStyle(color: Palette.YellowToDark[100])),
                 const SizedBox(width: 16),
                 Icon(Icons.access_time, color: Palette.YellowToDark[100]),
                 const SizedBox(width: 8),
-                Text('${post.date.day}.${post.date.month}.${post.date.year} - ${post.date.hour}:${post.date.minute}',
+                Text(
+                    '${post.date.day}.${post.date.month}.${post.date.year} - ${post.date.hour}:${post.date.minute}',
                     style: TextStyle(color: Palette.YellowToDark[100])),
               ],
             ),
@@ -216,10 +201,9 @@ class AddPostWidget extends StatefulWidget {
   _AddPostWidgetState createState() => _AddPostWidgetState();
 }
 
-class _AddPostWidgetState extends State<AddPostWidget>{
+class _AddPostWidgetState extends State<AddPostWidget> {
   final title_controller = TextEditingController();
   final content_controller = TextEditingController();
-
 
   @override
   void dispose() {
@@ -253,7 +237,8 @@ class _AddPostWidgetState extends State<AddPostWidget>{
           children: [
             Container(
               color: Palette.BlueToLight,
-              padding: const EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 16),
+              padding: const EdgeInsets.only(
+                  top: 16, bottom: 16, left: 16, right: 16),
               child: Row(
                 children: const [
                   Text(
@@ -271,57 +256,60 @@ class _AddPostWidgetState extends State<AddPostWidget>{
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      TextField(
-                        controller: title_controller,
-                        decoration: const InputDecoration(
-                          labelText: 'Title',
-                          labelStyle: TextStyle(color: Palette.OrangeToDark,fontSize: 20),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Palette.OrangeToDark),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Palette.OrangeToDark),
-                          ),
+                  child: Column(children: [
+                    TextField(
+                      controller: title_controller,
+                      decoration: const InputDecoration(
+                        labelText: 'Title',
+                        labelStyle: TextStyle(
+                            color: Palette.OrangeToDark, fontSize: 20),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Palette.OrangeToDark),
                         ),
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        controller: content_controller,
-                        decoration: const InputDecoration(
-                          labelText: 'Content',
-                          labelStyle: TextStyle(color: Palette.OrangeToDark,fontSize: 20),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Palette.OrangeToDark),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Palette.OrangeToDark),
-                          ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Palette.OrangeToDark),
                         ),
-                        style: const TextStyle(color: Colors.white),
                       ),
-                      const SizedBox(height: 16),
-                      ElevatedButton.icon(
-                          onPressed: () async {
-                            var titel = title_controller.text;
-                            var content = content_controller.text;
-                            if(titel.isEmpty|content.isEmpty){
-                              //show error message
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Please fill in all fields')));
-                              return;
-                            }
-                            remoteService.addPost(
-                                  title: titel,
-                                  content: content,
-                              );
-                              //return to home page
-                              Navigator.of(context).pop();
-                            },
-                          icon: Icon(Icons.send), label: Text('Post')
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: content_controller,
+                      decoration: const InputDecoration(
+                        labelText: 'Content',
+                        labelStyle: TextStyle(
+                            color: Palette.OrangeToDark, fontSize: 20),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Palette.OrangeToDark),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Palette.OrangeToDark),
+                        ),
                       ),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                        onPressed: () async {
+                          var titel = title_controller.text;
+                          var content = content_controller.text;
+                          if (titel.isEmpty | content.isEmpty) {
+                            //show error message
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('Please fill in all fields')));
+                            return;
+                          }
+                          remoteService.addPost(
+                            title: titel,
+                            content: content,
+                          );
+                          //return to home page
+                          Navigator.of(context).pop();
+                        },
+                        icon: Icon(Icons.send),
+                        label: Text('Post')),
                   ]),
                 ),
               ),
@@ -332,6 +320,7 @@ class _AddPostWidgetState extends State<AddPostWidget>{
     );
   }
 }
+
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
 
@@ -339,18 +328,17 @@ class SearchPage extends StatefulWidget {
   _SearchPageState createState() => _SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage>{
-   final search_controller = TextEditingController();
-   List<Post>? posts;
+class _SearchPageState extends State<SearchPage> {
+  final search_controller = TextEditingController();
+  List<Post>? posts;
 
-   @override
-   void dispose() {
-     search_controller.dispose();
-     super.dispose();
-   }
+  @override
+  void dispose() {
+    search_controller.dispose();
+    super.dispose();
+  }
 
-
-   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -374,7 +362,8 @@ class _SearchPageState extends State<SearchPage>{
           children: [
             Container(
               color: Palette.BlueToLight,
-              padding: const EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 16),
+              padding: const EdgeInsets.only(
+                  top: 16, bottom: 16, left: 16, right: 16),
               child: Row(
                 children: const [
                   Text(
@@ -392,39 +381,43 @@ class _SearchPageState extends State<SearchPage>{
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                       TextField(
-                        controller: search_controller,
-                        decoration: const InputDecoration(
-                          labelText: 'Search',
-                          labelStyle: TextStyle(color: Palette.OrangeToDark,fontSize: 20),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Palette.OrangeToDark),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Palette.OrangeToDark),
-                          ),
+                  child: Column(children: [
+                    TextField(
+                      controller: search_controller,
+                      decoration: const InputDecoration(
+                        labelText: 'Search',
+                        labelStyle: TextStyle(
+                            color: Palette.OrangeToDark, fontSize: 20),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Palette.OrangeToDark),
                         ),
-                        style: TextStyle(color: Colors.white),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Palette.OrangeToDark),
+                        ),
                       ),
-                      const SizedBox(height: 16),
-                      ElevatedButton.icon(
-                          onPressed: () async {
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                        onPressed: () async {
                           var page = 0;
                           var search = search_controller.text;
-                          if(search.isEmpty){
+                          if (search.isEmpty) {
                             //show error message
                             ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Please fill in all fields')));
+                                const SnackBar(
+                                    content:
+                                        Text('Please fill in all fields')));
                             return;
                           }
                           posts = await remoteService.search(search, page);
                           //show post page
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => PostPage(posts: posts,search: search)));
-                          },
-                          icon: Icon(Icons.search), label: Text('Search')
-                      ),
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  PostPage(posts: posts, search: search)));
+                        },
+                        icon: Icon(Icons.search),
+                        label: Text('Search')),
                   ]),
                 ),
               ),
@@ -433,16 +426,18 @@ class _SearchPageState extends State<SearchPage>{
         ),
       ),
     );
-
-    }
-  
+  }
 }
 
 class PostPage extends StatefulWidget {
   final List<Post>? posts;
   final String search;
 
-  const PostPage({Key? key, required this.posts, required this.search,}) : super(key: key);
+  const PostPage({
+    Key? key,
+    required this.posts,
+    required this.search,
+  }) : super(key: key);
 
   @override
   _PostPageState createState() => _PostPageState();
@@ -473,9 +468,10 @@ class _PostPageState extends State<PostPage> {
           children: [
             Container(
               color: Palette.BlueToLight,
-              padding: const EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 16),
+              padding: const EdgeInsets.only(
+                  top: 16, bottom: 16, left: 16, right: 16),
               child: Row(
-                children:  [
+                children: [
                   Text(
                     'Search Results for: ${widget.search}',
                     style: const TextStyle(
@@ -512,31 +508,30 @@ class PostWidget extends StatelessWidget {
 
   Widget build(BuildContext context) {
     String date;
-    if(post.date.isAfter(DateTime.now().subtract(const Duration(days: 1)))){
+    if (post.date.isAfter(DateTime.now().subtract(const Duration(days: 1)))) {
       date = '${post.date.hour}:';
-      if(post.date.hour < 10){
+      if (post.date.hour < 10) {
         date = '0$date';
       }
-      if(post.date.minute < 10) {
+      if (post.date.minute < 10) {
         date = '${date}0${post.date.minute}';
-      }else{
+      } else {
         date = '$date${post.date.minute}';
       }
-    }else{
+    } else {
       date = '${post.date.day}/${post.date.month}/${post.date.year}';
     } //💀
 
     return Padding(
-      padding: const EdgeInsets.symmetric(
-          horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Container(
         decoration: BoxDecoration(
           color: Palette.BlueToLight[400],
           borderRadius: BorderRadius.circular(8),
         ),
         child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(
-              vertical: 8, horizontal: 16),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           title: Text(
             post.title,
             maxLines: 2,
@@ -548,19 +543,15 @@ class PostWidget extends StatelessWidget {
           ),
           subtitle: Row(
             children: [
-
-              const Icon(Icons.account_circle, size: 16, color: Colors
-                  .black54),
+              const Icon(Icons.account_circle, size: 16, color: Colors.black54),
               const SizedBox(width: 4),
               Text(
                 post.userName,
                 style: const TextStyle(color: Colors.black54),
               ),
               const SizedBox(width: 16),
-              const Icon(Icons.access_time, size: 16, color: Colors
-                  .black54),
+              const Icon(Icons.access_time, size: 16, color: Colors.black54),
               const SizedBox(width: 4),
-
               Text(
                 date,
                 style: const TextStyle(color: Colors.black54),
@@ -568,15 +559,12 @@ class PostWidget extends StatelessWidget {
             ],
           ),
           trailing:
-          const Icon(
-              Icons.arrow_forward_ios, color: Palette.BlueToDark),
-
+              const Icon(Icons.arrow_forward_ios, color: Palette.BlueToDark),
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
-              builder: (_) =>
-                  FullScreenPostWidget(
-                    post: post,
-                  ),
+              builder: (_) => FullScreenPostWidget(
+                post: post,
+              ),
             ));
           },
         ),
@@ -590,185 +578,37 @@ class AccountPage extends StatefulWidget {
   _AccountPageState createState() => _AccountPageState();
 }
 
-class _AccountPageState extends State<AccountPage>{
-
-  @override
-  Widget build(BuildContext context) {
-    checkLogin();
-    if(isLoggedIn){
-      return Scaffold(
-        appBar: AppBar(
-          title: Row(
-            children: <Widget>[
-              Image.asset(
-                'assets/images/ghse_logo.png',
-                fit: BoxFit.contain,
-                height: 32,
-              ),
-              const Text(
-                '  GHSE Forum',
-                style: TextStyle(color: Palette.OrangeToLight),
-              ),
-            ],
-          ),
-        ),
-        body: Container(
-          color: Palette.BlueToDark,
-          child: Column(
-            children: [
-              Container(
-                color: Palette.BlueToLight,
-                padding: const EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 16),
-                child: Row(
-                  children:  const [
-                    Text(
-                      'Account',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Palette.OrangeToDark,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 16),
-                      ElevatedButton.icon(
-                          onPressed: () async {
-                            await remoteService.logout();
-                            isLoggedIn = false;
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage()));
-                          },
-                          icon: Icon(Icons.logout), label: Text('Logout')
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-  } else{
-      return Scaffold(
-        appBar: AppBar(
-          title: Row(
-            children: <Widget>[
-              Image.asset(
-                'assets/images/ghse_logo.png',
-                fit: BoxFit.contain,
-                height: 32,
-              ),
-              const Text(
-                '  GHSE Forum',
-                style: TextStyle(color: Palette.OrangeToLight),
-              ),
-            ],
-          ),
-        ),
-        body: Container(
-          color: Palette.BlueToDark,
-          child: Column(
-            children: [
-              Container(
-                color: Palette.BlueToLight,
-                padding: const EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 16),
-                child: Row(
-                  children:  const [
-                    Text(
-                      'Account',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Palette.OrangeToDark,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 16),
-                      ElevatedButton.icon(
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginPage()));
-                          },
-                          icon: Icon(Icons.login), label: Text('Login')
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton.icon(
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => RegisterPage()));
-                          },
-                          icon: Icon(Icons.person_add), label: Text('Register')
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-  }
-}
-
-class RegisterPage extends StatefulWidget {
-  @override
-  _RegisterPageState createState() => _RegisterPageState();
-}
-
-class _RegisterPageState extends State<RegisterPage>{
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
-  }
-
-
-}
-
-class LoginPage extends StatefulWidget {
-  @override
-  _LoginPageState createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage>{
-  final user_controller = TextEditingController();
-  final password_controller = TextEditingController();
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    user_controller.dispose();
-    password_controller.dispose();
-    super.dispose();
-  }
-
-
+class _AccountPageState extends State<AccountPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          children: <Widget>[
+            Image.asset(
+              'assets/images/ghse_logo.png',
+              fit: BoxFit.contain,
+              height: 32,
+            ),
+            const Text(
+              '  GHSE Forum',
+              style: TextStyle(color: Palette.OrangeToLight),
+            ),
+          ],
+        ),
+      ),
       body: Container(
         color: Palette.BlueToDark,
         child: Column(
           children: [
             Container(
               color: Palette.BlueToLight,
-              padding: const EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 16),
+              padding: const EdgeInsets.only(
+                  top: 16, bottom: 16, left: 16, right: 16),
               child: Row(
-                children:  const [
+                children: const [
                   Text(
-                    'Login',
+                    'Account',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -784,46 +624,15 @@ class _LoginPageState extends State<LoginPage>{
                 child: Column(
                   children: [
                     const SizedBox(height: 16),
-                    TextField(
-                      controller: user_controller,
-                      decoration: const InputDecoration(
-                        labelText: 'Username',
-                        labelStyle: TextStyle(color: Palette.OrangeToDark,fontSize: 20),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Palette.OrangeToDark),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Palette.OrangeToDark),
-                        ),
-                      ),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: password_controller,
-                      decoration: const InputDecoration(
-                        labelText: 'Password',
-                        labelStyle: TextStyle(color: Palette.OrangeToDark,fontSize: 20),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Palette.OrangeToDark),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Palette.OrangeToDark),
-                        ),
-                      ),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    const SizedBox(height: 16),
                     ElevatedButton.icon(
                         onPressed: () async {
-                          if(user_controller.text.isEmpty || password_controller.text.isEmpty){
-                            return;
-                          } else{
-                            await remoteService.getToken(user_controller.text, password_controller.text).then((value) =>checkLogin().then((value) => Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage()))));
-                          }
+                          await remoteService.logout();
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (_) => LoginPage()),
+                              (route) => false);
                         },
-                        icon: Icon(Icons.login), label: Text('Login')
-                    ),
+                        icon: Icon(Icons.logout),
+                        label: Text('Logout')),
                   ],
                 ),
               ),
@@ -832,5 +641,18 @@ class _LoginPageState extends State<LoginPage>{
         ),
       ),
     );
+  }
+}
+
+class RegisterPage extends StatefulWidget {
+  @override
+  _RegisterPageState createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    throw UnimplementedError();
   }
 }

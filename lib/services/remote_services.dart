@@ -44,7 +44,7 @@ class RemoteService {
     }
   }
 
-    Future<bool> getToken(String user_name, String password) async {
+    Future<LoginResponseModel> getToken(String user_name, String password) async {
       print('getToken called');
       var url = Uri.parse('${api_url}auth/authenticate');
       final body = jsonEncode(Auth(userName: user_name, password: password).toJson());
@@ -55,10 +55,12 @@ class RemoteService {
         var Token = response.body.substring(10,response.body.length-2);
         print('Token: $Token');
         await storage.write(key: 'token', value: Token);
-        return true;
+         return LoginResponseModel.fromJson(
+          json.decode(response.body),
+        );
       } else {
         print('LogIn failed: ${response.statusCode}');
-        return false;
+        throw Exception('Failed to load post');
       }
     }
 
@@ -112,5 +114,18 @@ class RemoteService {
     await storage.deleteAll().then((value) => print('Logged out'));
   }
 
+
+}
+
+class LoginResponseModel {
+  final String token;
+
+  LoginResponseModel({required this.token});
+
+  factory LoginResponseModel.fromJson(Map<String, dynamic> json) {
+    return LoginResponseModel(
+      token: json['token'],
+    );
+  }
 
 }

@@ -10,20 +10,20 @@ String authToJson(Auth data) => json.encode(data.toJson());
 
 class Auth {
   Auth({
-    required this.userName,
-    required this.password,
+    this.userName,
+    this.password,
   });
 
-  String userName;
-  String password;
+  String? userName;
+  String? password;
 
   factory Auth.fromJson(Map<String, dynamic> json) => Auth(
-    userName: json["user_name"],
-    password: json["password"],
-  );
+        userName: json["user_name"],
+        password: json["password"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "user_name": userName,
-    "password": password,
-  };
+        "user_name": userName,
+        "password": password,
+      };
 }

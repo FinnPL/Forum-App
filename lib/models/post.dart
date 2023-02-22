@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-List<Post> postFromJson(String str) => List<Post>.from(json.decode(str).map((x) => Post.fromJson(x)));
+List<Post> postFromJson(String str) =>
+    List<Post>.from(json.decode(str).map((x) => Post.fromJson(x)));
 
-String postToJson(List<Post> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String postToJson(List<Post> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Post {
   Post({
@@ -26,20 +28,20 @@ class Post {
   DateTime date;
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
-    id: json["id"],
-    title: json["title"],
-    content: json["content"],
-    userId: json["user_id"],
-    userName: json["user_name"],
-    date: DateTime.parse(json["date"]),
-  );
+        id: json["id"],
+        title: json["title"],
+        content: json["content"],
+        userId: json["user_id"],
+        userName: json["user_name"],
+        date: DateTime.parse(json["date"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "title": title,
-    "content": content,
-    "user_id": userId,
-    "user_name": userName,
-    "date": date.toIso8601String(),
-  };
+        "id": id,
+        "title": title,
+        "content": content,
+        "user_id": userId,
+        "user_name": userName,
+        "date": date.toIso8601String(),
+      };
 }

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:forum/palette.dart';
-import 'package:forum/views/home_page.dart';
+import 'package:forum/views/splash_page.dart';
 
-void main() =>runApp(MyApp());
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    checkLogin();
     return MaterialApp(
       title: 'GHSE Forum',
       theme: ThemeData(
@@ -19,7 +18,7 @@ class MyApp extends StatelessWidget {
           selectionHandleColor: Palette.OrangeToDark,
         ),
       ),
-      home:  const HomePage(),
+      home: Splash_page(),
     );
   }
 }
