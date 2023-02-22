@@ -3,32 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/views/home_page.dart';
 
-class LoginPage extends StatefulWidget {
-  @override
-  _LoginPageState createState() => _LoginPageState();
+class AddPostWidget extends StatefulWidget {
+  const AddPostWidget({Key? key}) : super(key: key);
 
+  @override
+  _AddPostWidgetState createState() => _AddPostWidgetState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final user_controller = TextEditingController();
-  final password_controller = TextEditingController();
-  late bool _obscureText;
-  @override
-  void initState() {
-    _obscureText = true;
-  }
+class _AddPostWidgetState extends State<AddPostWidget> {
+  final title_controller = TextEditingController();
+  final content_controller = TextEditingController();
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    user_controller.dispose();
-    password_controller.dispose();
+    title_controller.dispose();
+    content_controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -56,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Row(
                 children: const [
                   Text(
-                    'Login',
+                    'Create a new post',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -69,13 +64,12 @@ class _LoginPageState extends State<LoginPage> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 16),
+                child: SingleChildScrollView(
+                  child: Column(children: [
                     TextField(
-                      controller: user_controller,
+                      controller: title_controller,
                       decoration: const InputDecoration(
-                        labelText: 'Username',
+                        labelText: 'Title',
                         labelStyle: TextStyle(
                             color: Palette.OrangeToDark, fontSize: 20),
                         enabledBorder: OutlineInputBorder(
@@ -87,12 +81,11 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       style: const TextStyle(color: Colors.white),
                     ),
-                     SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     TextField(
-                      obscureText: _obscureText,
-                      controller: password_controller,
-                      decoration:  InputDecoration(
-                        labelText: 'Password',
+                      controller: content_controller,
+                      decoration: const InputDecoration(
+                        labelText: 'Content',
                         labelStyle: TextStyle(
                             color: Palette.OrangeToDark, fontSize: 20),
                         enabledBorder: OutlineInputBorder(
@@ -101,44 +94,32 @@ class _LoginPageState extends State<LoginPage> {
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Palette.OrangeToDark),
                         ),
-                        suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscureText
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: Palette.OrangeToDark,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscureText = !_obscureText;
-                          });
-                        },
-                        ),
-
-                        ),
+                      ),
                       style: const TextStyle(color: Colors.white),
                     ),
-
-
                     const SizedBox(height: 16),
                     ElevatedButton.icon(
                         onPressed: () async {
-                          if (user_controller.text.isEmpty ||
-                              password_controller.text.isEmpty) {
+                          var titel = title_controller.text;
+                          var content = content_controller.text;
+                          if (titel.isEmpty | content.isEmpty) {
+                            //show error message
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                    Text('Please fill in all fields')));
                             return;
-                          } else {
-                            await remoteService
-                                .getToken(user_controller.text,
-                                    password_controller.text)
-                                .then((value) => Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => HomePage())));
                           }
+                          remoteService.addPost(
+                            title: titel,
+                            content: content,
+                          );
+                          //return to home page
+                          Navigator.of(context).pop();
                         },
-                        icon: Icon(Icons.login),
-                        label: Text('Login')),
-                  ],
+                        icon: Icon(Icons.send),
+                        label: Text('Post')),
+                  ]),
                 ),
               ),
             ),
