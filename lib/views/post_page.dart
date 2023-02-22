@@ -6,7 +6,6 @@ import 'package:forum/models/post.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/views/comment_list_view.dart';
 import 'package:forum/views/home_page.dart';
-import 'package:forum/views/post_page.dart';
 
 class FullScreenPostWidget extends StatefulWidget {
   final Post post;
@@ -23,9 +22,17 @@ class _FullScreenPostWidgetState extends State<FullScreenPostWidget> {
   int page = 0;
   bool end = false;
   bool isLoaded = false;
+  TextEditingController comment_controller = TextEditingController();
+
 
   _FullScreenPostWidgetState(this.post);
 
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    comment_controller.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -181,6 +188,35 @@ class _FullScreenPostWidgetState extends State<FullScreenPostWidget> {
                 ],
               ),
 
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: 0, bottom: 16, left: 16, right: 16),
+              child:
+                TextField(
+                  cursorColor: Colors.black,
+                  controller: comment_controller,
+                  decoration:  InputDecoration(
+                    suffixIcon: IconButton(onPressed: (){
+                      String text = comment_controller.text;
+                      if (comment_controller.text.isNotEmpty) {
+                        remoteService.addComment(post.id, text).then((value) => {
+                          if (value == true) {
+                            setState(() {
+                              comments.insert(0, Comment(userId: '0', content: text, date: DateTime.now(), userName: 'Me', id: '0'));
+                            })
+                          }
+                        });
+                        comment_controller.clear();
+                      }
+                    }
+                        , icon: Icon(Icons.send)),
+                    fillColor: Palette.Back,
+                    filled: true,
+                    hintText: 'Write a comment',
+                  ),
+                  style: const TextStyle(color: Colors.black),
+                ),
             ),
             Expanded(child:
             ListView.builder(

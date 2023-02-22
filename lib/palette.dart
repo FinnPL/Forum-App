@@ -97,4 +97,20 @@ class Palette {
       900: Color(0xffffffff), //100%
     },
   );
+  static const MaterialColor Back = MaterialColor(
+    0xff9398b7,
+    <int, Color>{
+      50: Color(0xff9398b7), //10%
+      100: Color(0xff9398b7), //20%
+      200: Color(0xff9398b7), //30%
+      300: Color(0xff9398b7), //40%
+      400: Color(0xff9398b7), //50%
+      500: Color(0xff9398b7), //60%
+      600: Color(0xff9398b7), //70%
+      700: Color(0xff9398b7), //80%
+      800: Color(0xff9398b7), //90%
+      900: Color(0xff9398b7), //100%
+    },
+  );
 } // you can define define int 500 as the default shade and add your lighter tints above and darker tints below.
+

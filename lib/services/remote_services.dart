@@ -130,6 +130,25 @@ class RemoteService {
       throw Exception('Failed to load post');
     }
   }
+
+  Future<bool> addComment(String id, String text) async {
+    var url = Uri.parse('${api_url}comment/add/');
+    var Token = await storage.readAll().then((value) => value['token']);
+    headers.addAll({'Authorization': 'Bearer $Token'});
+    var response = await http.post(url,headers: headers,body: jsonEncode(
+        {
+          "content": "$text",
+          "post_id": "$id"
+        }
+    ));
+    if (response.statusCode == 200) {
+      print('Comment added');
+      return true;
+    } else {
+      print('Comment failed: ${response.statusCode}');
+      return false;
+    }
+  }
 }
 
 class LoginResponseModel {

@@ -39,3 +39,30 @@ class Comment {
     "date": date.toIso8601String(),
   };
 }
+
+// To parse this JSON data, do
+//
+//     final commentRequest = commentRequestFromJson(jsonString);
+CommentRequest commentRequestFromJson(String str) => CommentRequest.fromJson(json.decode(str));
+
+String commentRequestToJson(CommentRequest data) => json.encode(data.toJson());
+
+class CommentRequest {
+  CommentRequest({
+    required this.content,
+    required this.postId,
+  });
+
+  String content;
+  String postId;
+
+  factory CommentRequest.fromJson(Map<String, dynamic> json) => CommentRequest(
+    content: json["content"],
+    postId: json["post_id"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "content": content,
+    "post_id": postId,
+  };
+}
