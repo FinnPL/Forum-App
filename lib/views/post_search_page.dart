@@ -1,15 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:forum/models/post.dart';
 import 'package:forum/palette.dart';
-import 'package:forum/views/home_page.dart';
-import 'package:forum/views/login_page.dart';
+import 'package:forum/views/post_list_view.dart';
 
-class AccountPage extends StatefulWidget {
+class PostPage extends StatefulWidget {
+  final List<Post>? posts;
+  final String search;
+
+  const PostPage({
+    Key? key,
+    required this.posts,
+    required this.search,
+  }) : super(key: key);
+
   @override
-  _AccountPageState createState() => _AccountPageState();
+  _PostPageState createState() => _PostPageState();
 }
 
-class _AccountPageState extends State<AccountPage> {
+class _PostPageState extends State<PostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,10 +53,10 @@ class _AccountPageState extends State<AccountPage> {
               padding: const EdgeInsets.only(
                   top: 16, bottom: 16, left: 16, right: 16),
               child: Row(
-                children: const [
+                children: [
                   Text(
-                    'Account',
-                    style: TextStyle(
+                    'Search Results for: ${widget.search}',
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Palette.OrangeToDark,
@@ -59,19 +68,11 @@ class _AccountPageState extends State<AccountPage> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 16),
-                    ElevatedButton.icon(
-                        onPressed: () async {
-                          await remoteService.logout();
-                          Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (_) => LoginPage()),
-                                  (route) => false);
-                        },
-                        icon: Icon(Icons.logout),
-                        label: Text('Logout')),
-                  ],
+                child: ListView.builder(
+                  itemCount: widget.posts!.length,
+                  itemBuilder: (context, index) {
+                    return PostWidget(post: widget.posts![index]);
+                  },
                 ),
               ),
             ),

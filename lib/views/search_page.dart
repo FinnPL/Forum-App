@@ -1,24 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:forum/models/post.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/views/home_page.dart';
+import 'package:forum/views/post_list_view.dart';
+import 'package:forum/views/post_search_page.dart';
 
-class AddPostWidget extends StatefulWidget {
-  const AddPostWidget({Key? key}) : super(key: key);
+class SearchPage extends StatefulWidget {
+  const SearchPage({Key? key}) : super(key: key);
 
   @override
-  _AddPostWidgetState createState() => _AddPostWidgetState();
+  _SearchPageState createState() => _SearchPageState();
 }
 
-class _AddPostWidgetState extends State<AddPostWidget> {
-  final title_controller = TextEditingController();
-  final content_controller = TextEditingController();
+class _SearchPageState extends State<SearchPage> {
+  final search_controller = TextEditingController();
+  List<Post>? posts;
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
-    title_controller.dispose();
-    content_controller.dispose();
+    search_controller.dispose();
     super.dispose();
   }
 
@@ -58,7 +59,7 @@ class _AddPostWidgetState extends State<AddPostWidget> {
               child: Row(
                 children: const [
                   Text(
-                    'Create a new post',
+                    'Search for Posts',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -74,9 +75,9 @@ class _AddPostWidgetState extends State<AddPostWidget> {
                 child: SingleChildScrollView(
                   child: Column(children: [
                     TextField(
-                      controller: title_controller,
+                      controller: search_controller,
                       decoration: const InputDecoration(
-                        labelText: 'Title',
+                        labelText: 'Search',
                         labelStyle: TextStyle(
                             color: Palette.OrangeToDark, fontSize: 20),
                         enabledBorder: OutlineInputBorder(
@@ -86,30 +87,14 @@ class _AddPostWidgetState extends State<AddPostWidget> {
                           borderSide: BorderSide(color: Palette.OrangeToDark),
                         ),
                       ),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: content_controller,
-                      decoration: const InputDecoration(
-                        labelText: 'Content',
-                        labelStyle: TextStyle(
-                            color: Palette.OrangeToDark, fontSize: 20),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Palette.OrangeToDark),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Palette.OrangeToDark),
-                        ),
-                      ),
-                      style: const TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white),
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton.icon(
                         onPressed: () async {
-                          var titel = title_controller.text;
-                          var content = content_controller.text;
-                          if (titel.isEmpty | content.isEmpty) {
+                          var page = 0;
+                          var search = search_controller.text;
+                          if (search.isEmpty) {
                             //show error message
                             ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -117,15 +102,14 @@ class _AddPostWidgetState extends State<AddPostWidget> {
                                     Text('Please fill in all fields')));
                             return;
                           }
-                          remoteService.addPost(
-                            title: titel,
-                            content: content,
-                          );
-                          //return to home page
-                          Navigator.of(context).pop();
+                          posts = await remoteService.search(search, page);
+                          //show post page
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  PostPage(posts: posts, search: search)));
                         },
-                        icon: Icon(Icons.send),
-                        label: Text('Post')),
+                        icon: Icon(Icons.search),
+                        label: Text('Search')),
                   ]),
                 ),
               ),

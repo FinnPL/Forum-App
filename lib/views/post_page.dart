@@ -72,6 +72,13 @@ class _FullScreenPostWidgetState extends State<FullScreenPostWidget> {
 
     return Scaffold(
       appBar: AppBar(
+          leading: IconButton(
+            color: Palette.OrangeToLight,
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         title: Row(
           children: <Widget>[
             Image.asset(
