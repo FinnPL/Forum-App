@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:forum/models/auth.dart';
+import 'package:forum/models/comment.dart';
 import 'package:forum/models/post.dart';
 import 'package:http/http.dart' as http;
 
@@ -48,8 +49,9 @@ class RemoteService {
       print('getToken called');
       var url = Uri.parse('${api_url}auth/authenticate');
       final body = jsonEncode(Auth(userName: user_name, password: password).toJson());
+      headers.remove('Authorization');
 
-      final response = await http.post(url, body: body, headers: headers);
+      final response = await http.post(url, body: body, headers:headers);
       if (response.statusCode == 200) {
         print('LogIn successful');
         var Token = response.body.substring(10,response.body.length-2);
@@ -114,7 +116,20 @@ class RemoteService {
     await storage.deleteAll().then((value) => print('Logged out'));
   }
 
-
+ Future<List<Comment>> getComments(int page,String post_id) async {
+    var url = Uri.parse('${api_url}comment/get/$post_id/$page');
+    var Token = await storage.readAll().then((value) => value['token']);
+    headers.addAll({'Authorization': 'Bearer $Token'});
+  print(url);
+    var response = await http.get(url,headers: headers);
+    if (response.statusCode == 200) {
+      var json = response.body;
+      return commentFromJson(json);
+    } else {
+      print('Failed to get comments: ${response.statusCode}');
+      throw Exception('Failed to load post');
+    }
+  }
 }
 
 class LoginResponseModel {
@@ -127,5 +142,4 @@ class LoginResponseModel {
       token: json['token'],
     );
   }
-
 }

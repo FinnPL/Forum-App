@@ -6,10 +6,8 @@ import 'package:forum/palette.dart';
 import 'package:forum/services/remote_services.dart';
 import 'package:forum/views/account_page.dart';
 import 'package:forum/views/create_post.dart';
-import 'package:forum/views/home_page.dart';
-import 'package:forum/views/login_page.dart';
 import 'package:forum/views/post_list_view.dart';
-import 'package:forum/views/post_page.dart';
+
 
 RemoteService remoteService = new RemoteService();
 
@@ -88,6 +86,8 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Palette.OrangeToDark,
       ),
       body: RefreshIndicator(
+        color: Palette.OrangeToDark,
+        backgroundColor: Palette.BlueToLight[50],
         onRefresh: () async {
           page = 0;
           end = false;
@@ -95,7 +95,6 @@ class _HomePageState extends State<HomePage> {
                 posts = value;
               }));
         },
-        backgroundColor: Palette.BlueToDark[200],
         child: Visibility(
           visible: isLoaded,
           replacement: const Center(
