@@ -10,7 +10,7 @@ final storage = new FlutterSecureStorage();
 
 
 class RemoteService {
-  final api_url = 'http://68.219.225.10:8080/api/v1/';
+  final api_url = 'http://13.94.152.122:8080/api/v1/';
 
   var headers = {
     'Content-Type': 'application/json',
