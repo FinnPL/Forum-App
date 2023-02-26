@@ -10,7 +10,7 @@ final storage = new FlutterSecureStorage();
 
 
 class RemoteService {
-  final api_url = 'http://192.168.178.54:8080/api/v1/';
+  final api_url = 'http://68.219.225.10:8080/api/v1/';
 
   var headers = {
     'Content-Type': 'application/json',
@@ -40,6 +40,8 @@ class RemoteService {
       var Token = response.body.substring(10,response.body.length-2);
       print('Token: $Token');
       await storage.write(key: 'token', value: Token);
+      var date = DateTime.now().add(Duration(hours: 24));
+      await storage.write(key: 'expiration', value: date.toString());
     } else {
       print('Registration failed: ${response.statusCode}');
     }
@@ -57,6 +59,8 @@ class RemoteService {
         var Token = response.body.substring(10,response.body.length-2);
         print('Token: $Token');
         await storage.write(key: 'token', value: Token);
+        var date = DateTime.now().add(Duration(hours: 24));
+        await storage.write(key: 'expiration', value: date.toString());
          return LoginResponseModel.fromJson(
           json.decode(response.body),
         );
@@ -103,6 +107,15 @@ class RemoteService {
 
   Future<bool> isLoggedIn() async {
     print('Checking if logged in');
+    var expiration = await storage.readAll().then((value) => value['expiration']);
+    if (expiration != null) {
+      var date = DateTime.parse(expiration);
+      if (date.isBefore(DateTime.now())) {
+        print('Token expired');
+        await storage.deleteAll();
+        return false;
+      }
+    }
     var Token = await storage.readAll().then((value) => value['token']);
     print('Tokkkkk: $Token');
     if ( Token != null) {
