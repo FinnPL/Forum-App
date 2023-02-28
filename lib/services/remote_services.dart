@@ -2,15 +2,17 @@ import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:forum/models/auth.dart';
+import 'package:forum/models/auth_response.dart';
 import 'package:forum/models/comment.dart';
 import 'package:forum/models/post.dart';
+import 'package:forum/services/remote_services.dart';
 import 'package:http/http.dart' as http;
 
 final storage = new FlutterSecureStorage();
 
 
 class RemoteService {
-  final api_url = 'http://13.94.152.122:8080/api/v1/';
+  final api_url = 'http://192.168.178.54:8080/api/v1/';
 
   var headers = {
     'Content-Type': 'application/json',
@@ -37,9 +39,12 @@ class RemoteService {
     final response = await http.post(url, body: body, headers: headers);
     if (response.statusCode == 200) {
       print('Registration successful');
-      var Token = response.body.substring(10,response.body.length-2);
+      AuthResponse authResponse = authResponseFromJson(response.body);
+      var Token = authResponse.token;
       print('Token: $Token');
       await storage.write(key: 'token', value: Token);
+      await storage.write(key: 'user_name', value: user_name);
+      await storage.write(key: 'user_id', value: authResponse.userId);
       var date = DateTime.now().add(Duration(hours: 24));
       await storage.write(key: 'expiration', value: date.toString());
     } else {
@@ -47,7 +52,7 @@ class RemoteService {
     }
   }
 
-    Future<LoginResponseModel> getToken(String user_name, String password) async {
+    Future<AuthResponse> getToken(String user_name, String password) async {
       print('getToken called');
       var url = Uri.parse('${api_url}auth/authenticate');
       final body = jsonEncode(Auth(userName: user_name, password: password).toJson());
@@ -56,14 +61,15 @@ class RemoteService {
       final response = await http.post(url, body: body, headers:headers);
       if (response.statusCode == 200) {
         print('LogIn successful');
-        var Token = response.body.substring(10,response.body.length-2);
+        AuthResponse authResponse = authResponseFromJson(response.body);
+        var Token = authResponse.token;
         print('Token: $Token');
         await storage.write(key: 'token', value: Token);
+        await storage.write(key: 'user_name', value: user_name);
+        await storage.write(key: 'user_id', value: authResponse.userId);
         var date = DateTime.now().add(Duration(hours: 24));
         await storage.write(key: 'expiration', value: date.toString());
-         return LoginResponseModel.fromJson(
-          json.decode(response.body),
-        );
+         return authResponseFromJson(response.body);
       } else {
         print('LogIn failed: ${response.statusCode}');
         throw Exception('Failed to load post');
@@ -161,17 +167,5 @@ class RemoteService {
       print('Comment failed: ${response.statusCode}');
       return false;
     }
-  }
-}
-
-class LoginResponseModel {
-  final String token;
-
-  LoginResponseModel({required this.token});
-
-  factory LoginResponseModel.fromJson(Map<String, dynamic> json) {
-    return LoginResponseModel(
-      token: json['token'],
-    );
   }
 }
