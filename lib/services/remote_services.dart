@@ -11,7 +11,7 @@ import 'package:http/http.dart' as http;
 final LocalServices localServices = new LocalServices();
 
 class RemoteService {
-  final api_url = 'http://192.168.178.54:8080/api/v1/';
+  final api_url = 'http://13.94.152.122:8080/api/v1/';
 
   var headers = {
     'Content-Type': 'application/json',
