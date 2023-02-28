@@ -29,4 +29,21 @@ class LocalServices {
   deleteUserData() async {
     await storage.deleteAll();
   }
+  String getFormatedDate(DateTime date) {
+    String formatedDate = '';
+    if (date.isAfter(DateTime.now().subtract(const Duration(days: 1)))) {
+      formatedDate = '${date.hour}:';
+      if (date.hour < 10) {
+        formatedDate = '0$formatedDate';
+      }
+      if (date.minute < 10) {
+        formatedDate = '${formatedDate}0${date.minute}';
+      } else {
+        formatedDate = '$formatedDate${date.minute}';
+      }
+    } else {
+      formatedDate = '${date.day}/${date.month}/${date.year}';
+    }
+    return formatedDate;
+  }
 }

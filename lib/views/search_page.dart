@@ -87,7 +87,7 @@ class _SearchPageState extends State<SearchPage> {
                           borderSide: BorderSide(color: Palette.OrangeToDark),
                         ),
                       ),
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton.icon(
@@ -108,8 +108,8 @@ class _SearchPageState extends State<SearchPage> {
                               builder: (context) =>
                                   PostPage(posts: posts, search: search)));
                         },
-                        icon: Icon(Icons.search),
-                        label: Text('Search')),
+                        icon: const Icon(Icons.search),
+                        label: const Text('Search')),
                   ]),
                 ),
               ),

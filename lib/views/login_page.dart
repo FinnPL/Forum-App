@@ -4,6 +4,8 @@ import 'package:forum/palette.dart';
 import 'package:forum/views/home_page.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 
@@ -15,6 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   late bool _obscureText;
   @override
   void initState() {
+    super.initState();
     _obscureText = true;
   }
 
@@ -87,18 +90,18 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       style: const TextStyle(color: Colors.white),
                     ),
-                     SizedBox(height: 16),
+                     const SizedBox(height: 16),
                     TextField(
                       obscureText: _obscureText,
                       controller: password_controller,
                       decoration:  InputDecoration(
                         labelText: 'Password',
-                        labelStyle: TextStyle(
+                        labelStyle: const TextStyle(
                             color: Palette.OrangeToDark, fontSize: 20),
-                        enabledBorder: OutlineInputBorder(
+                        enabledBorder: const OutlineInputBorder(
                           borderSide: BorderSide(color: Palette.OrangeToDark),
                         ),
-                        focusedBorder: OutlineInputBorder(
+                        focusedBorder: const OutlineInputBorder(
                           borderSide: BorderSide(color: Palette.OrangeToDark),
                         ),
                         suffixIcon: IconButton(
@@ -133,11 +136,11 @@ class _LoginPageState extends State<LoginPage> {
                                 .then((value) => Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => HomePage())));
+                                        builder: (context) => const HomePage())));
                           }
                         },
-                        icon: Icon(Icons.login),
-                        label: Text('Login')),
+                        icon: const Icon(Icons.login),
+                        label: const Text('Login')),
                   ],
                 ),
               ),

@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:forum/models/comment.dart';
 import 'package:forum/palette.dart';
+import 'package:forum/services/local_services.dart';
 
 class CommentWidget extends StatelessWidget {
   const CommentWidget({
@@ -13,21 +13,7 @@ class CommentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String date;
-    if (comment.date.isAfter(DateTime.now().subtract(const Duration(days: 1)))) {
-      date = '${comment.date.hour}:';
-      if (comment.date.hour < 10) {
-        date = '0$date';
-      }
-      if (comment.date.minute < 10) {
-        date = '${date}0${comment.date.minute}';
-      } else {
-        date = '$date${comment.date.minute}';
-      }
-    } else {
-      date = '${comment.date.day}/${comment.date.month}/${comment.date.year}';
-    } //💀
-
+    String date = LocalServices().getFormatedDate(comment.date);
     return Container(
       decoration: BoxDecoration(
         color: Palette.BlueToLight[400],

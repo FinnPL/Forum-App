@@ -1,9 +1,8 @@
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:forum/models/comment.dart';
 import 'package:forum/models/post.dart';
 import 'package:forum/palette.dart';
+import 'package:forum/services/local_services.dart';
 import 'package:forum/views/comment_list_view.dart';
 import 'package:forum/views/home_page.dart';
 
@@ -42,18 +41,16 @@ class _FullScreenPostWidgetState extends State<FullScreenPostWidget> {
 
   getData() async {
     comments = await remoteService.getComments(0, post.id);
-    if (comments != null) {
-      setState(() {
-        isLoaded = true;
-      });
-    }
+    setState(() {
+      isLoaded = true;
+    });
   }
 
   addNextPage() {
     page++;
     remoteService.getComments(page, post.id).then((value) =>
         setState(() {
-          comments!.addAll(value!);
+          comments.addAll(value);
           if (value.isEmpty) end = true;
         }));
   }
@@ -62,20 +59,7 @@ class _FullScreenPostWidgetState extends State<FullScreenPostWidget> {
   //Page to display a post in full screen including the post Content and Comments
   @override
   Widget build(BuildContext context) {
-    String date;
-    if (post.date.isAfter(DateTime.now().subtract(const Duration(days: 1)))) {
-      date = '${post.date.hour}:';
-      if (post.date.hour < 10) {
-        date = '0$date';
-      }
-      if (post.date.minute < 10) {
-        date = '${date}0${post.date.minute}';
-      } else {
-        date = '$date${post.date.minute}';
-      }
-    } else {
-      date = '${post.date.day}/${post.date.month}/${post.date.year}';
-    } //💀
+    String date = LocalServices().getFormatedDate(post.date);
 
     return Scaffold(
       appBar: AppBar(
@@ -118,28 +102,28 @@ class _FullScreenPostWidgetState extends State<FullScreenPostWidget> {
                 children: [
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.account_circle,
                         size: 15,
                         color: Colors.black54,
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '${post.userName}',
+                        post.userName,
                         style: const TextStyle(
                           fontSize: 16,
                           color: Colors.black54,
                         ),
                       ),
                       const SizedBox(width: 16),
-                      Icon(
+                      const Icon(
                         Icons.access_time,
                         size: 15,
                         color: Colors.black54,
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '$date',
+                        date,
                         style: const TextStyle(
                           fontSize: 16,
                           color: Colors.black54,
@@ -148,24 +132,18 @@ class _FullScreenPostWidgetState extends State<FullScreenPostWidget> {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  Container(
-                    child:
-                    Text(
-                      post.title,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  Text(
+                    post.title,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 6),
-                  Container(
-                    child:
-                    Text(
-                      post.content,
-                      style: const TextStyle(
-                        fontSize: 16,
-                      ),
+                  Text(
+                    post.content,
+                    style: const TextStyle(
+                      fontSize: 16,
                     ),
                   ),
                 ],
@@ -176,10 +154,10 @@ class _FullScreenPostWidgetState extends State<FullScreenPostWidget> {
               padding: const EdgeInsets.only(
                   top: 16, bottom: 16, left: 16, right: 16),
               child: Row(
-                children: [
+                children: const [
                   Text(
                     'Comments',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Palette.OrangeToDark,
@@ -210,7 +188,7 @@ class _FullScreenPostWidgetState extends State<FullScreenPostWidget> {
                         comment_controller.clear();
                       }
                     }
-                        , icon: Icon(Icons.send)),
+                        , icon: const Icon(Icons.send)),
                     fillColor: Palette.Back,
                     filled: true,
                     hintText: 'Write a comment',
@@ -221,9 +199,9 @@ class _FullScreenPostWidgetState extends State<FullScreenPostWidget> {
             Expanded(child:
             ListView.builder(
                 itemBuilder: (context, index) {
-                  int? post_length = comments?.length;
+                  int? postLength = comments.length;
 
-                  if (index == post_length && !end) {
+                  if (index == postLength && !end) {
                     addNextPage();
                     return Container(
                       padding: const EdgeInsets.all(16),
@@ -231,10 +209,11 @@ class _FullScreenPostWidgetState extends State<FullScreenPostWidget> {
                         child: CircularProgressIndicator(),
                       ),
                     );
-                  } else if (index < post_length!) {
-                    final comment = comments![index];
+                  } else if (index < postLength) {
+                    final comment = comments[index];
                     return CommentWidget(comment: comment);
                   }
+                  return null;
                 }
             )
             ),

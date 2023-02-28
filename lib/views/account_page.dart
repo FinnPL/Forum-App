@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:forum/palette.dart';
+import 'package:forum/services/local_services.dart';
+import 'package:forum/services/remote_services.dart';
 import 'package:forum/views/home_page.dart';
 import 'package:forum/views/login_page.dart';
 
@@ -10,6 +12,13 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
+  String username = '';
+
+  fetchUserdata() async {
+    username = (await LocalServices().getUserName())!;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,6 +70,15 @@ class _AccountPageState extends State<AccountPage> {
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
+                    const SizedBox(height: 16),
+                    Text(
+                      'Username: $username',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Palette.OrangeToDark,
+                      ),
+                    ),
                     const SizedBox(height: 16),
                     ElevatedButton.icon(
                         onPressed: () async {

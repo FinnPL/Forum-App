@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:forum/models/post.dart';
 import 'package:forum/palette.dart';
+import 'package:forum/services/local_services.dart';
+import 'package:forum/services/remote_services.dart';
 import 'package:forum/views/post_page.dart';
 
 class PostWidget extends StatelessWidget {
@@ -10,20 +12,7 @@ class PostWidget extends StatelessWidget {
   const PostWidget({Key? key, required this.post});
 
   Widget build(BuildContext context) {
-    String date;
-    if (post.date.isAfter(DateTime.now().subtract(const Duration(days: 1)))) {
-      date = '${post.date.hour}:';
-      if (post.date.hour < 10) {
-        date = '0$date';
-      }
-      if (post.date.minute < 10) {
-        date = '${date}0${post.date.minute}';
-      } else {
-        date = '$date${post.date.minute}';
-      }
-    } else {
-      date = '${post.date.day}/${post.date.month}/${post.date.year}';
-    } //💀
+    String date = LocalServices().getFormatedDate(post.date);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

@@ -5,6 +5,8 @@ import 'package:forum/views/home_page.dart';
 import 'package:forum/views/login_page.dart';
 
 class Splash_page extends StatefulWidget {
+  const Splash_page({super.key});
+
   @override
   _Splash_pageState createState() => _Splash_pageState();
 }
@@ -33,7 +35,7 @@ class _Splash_pageState extends State<Splash_page> {
     if (isLoggedIn) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => const HomePage()),
       );
     }
   }
