@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:forum/palette.dart';
+import 'package:forum/views/app_bar.dart';
 import 'package:forum/views/home_page.dart';
 
 class AddPostWidget extends StatefulWidget {
@@ -25,28 +26,7 @@ class _AddPostWidgetState extends State<AddPostWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          color: Palette.OrangeToLight,
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Row(
-          children: <Widget>[
-            Image.asset(
-              'assets/images/ghse_logo.png',
-              fit: BoxFit.contain,
-              height: 32,
-            ),
-            const Text(
-              '  GHSE Forum',
-              style: TextStyle(color: Palette.OrangeToLight),
-            ),
-          ],
-        ),
-      ),
+      appBar: buildAppBar(context),
       body: Container(
         color: Palette.BlueToDark,
         child: Column(

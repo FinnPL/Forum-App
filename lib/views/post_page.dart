@@ -3,6 +3,7 @@ import 'package:forum/models/comment.dart';
 import 'package:forum/models/post.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/services/local_services.dart';
+import 'package:forum/views/app_bar.dart';
 import 'package:forum/views/comment_list_view.dart';
 import 'package:forum/views/home_page.dart';
 
@@ -62,28 +63,7 @@ class _FullScreenPostWidgetState extends State<FullScreenPostWidget> {
     String date = LocalServices().getFormatedDate(post.date);
 
     return Scaffold(
-      appBar: AppBar(
-          leading: IconButton(
-            color: Palette.OrangeToLight,
-            icon: const Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        title: Row(
-          children: <Widget>[
-            Image.asset(
-              'assets/images/ghse_logo.png',
-              fit: BoxFit.contain,
-              height: 32,
-            ),
-            const Text(
-              '  GHSE Forum',
-              style: TextStyle(color: Palette.OrangeToLight),
-            ),
-          ],
-        ),
-      ),
+      appBar: buildAppBar(context),
       body: Container(
         color: Palette.BlueToDark,
         child: Column(

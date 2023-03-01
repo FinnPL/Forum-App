@@ -5,6 +5,7 @@ import 'package:forum/models/post.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/services/remote_services.dart';
 import 'package:forum/views/account_page.dart';
+import 'package:forum/views/app_bar.dart';
 import 'package:forum/views/create_post.dart';
 import 'package:forum/views/home_page.dart';
 import 'package:forum/views/post_list_view.dart';
@@ -53,31 +54,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     print('build called');
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: <Widget>[
-            Image.asset(
-              'assets/images/ghse_logo.png',
-              fit: BoxFit.contain,
-              height: 32,
-            ),
-            const Text(
-              '  GHSE Forum',
-              style: TextStyle(color: Palette.OrangeToLight),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-              onPressed: () => Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (_) => const SearchPage())),
-              icon: const Icon(Icons.search),color: Palette.BlueToLight[400]),
-          IconButton(
-              onPressed: () => Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (_) => AccountPage())),
-              icon: const Icon(Icons.person),color: Palette.BlueToLight[400],),
-        ],
-      ),
+      appBar: buildMainAppBar(context),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(

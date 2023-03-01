@@ -161,4 +161,18 @@ class RemoteService {
       return false;
     }
   }
+  Future<List<Post>> getPostsOfUser(int page, String user_id) async{
+    var url = Uri.parse('${api_url}post/user/$user_id/$page');
+    var Token = await localServices.getToken();
+    headers.addAll({'Authorization': 'Bearer $Token'});
+
+    var response = await http.get(url,headers: headers);
+    if (response.statusCode == 200) {
+      var json = response.body;
+      return postFromJson(json);
+    } else {
+      print('Failed to get posts: ${response.statusCode}');
+      throw Exception('Failed to load post');
+    }
+  }
 }
