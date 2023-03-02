@@ -4,6 +4,7 @@ import 'package:forum/models/auth.dart';
 import 'package:forum/models/auth_response.dart';
 import 'package:forum/models/comment.dart';
 import 'package:forum/models/post.dart';
+import 'package:forum/models/user_response.dart';
 import 'package:forum/services/local_services.dart';
 import 'package:http/http.dart' as http;
 
@@ -157,6 +158,19 @@ class RemoteService {
     if (response.statusCode == 200) {
       var json = response.body;
       return postFromJson(json);
+    } else {
+      throw Exception('Failed to load post');
+    }
+  }
+
+  Future<UserResponse> getUserByUUID(String userId)async{
+    var url = Uri.parse('${apiUrl}user/$userId');
+    var token = await localServices.getToken();
+    headers.addAll({'Authorization': 'Bearer $token'});
+    var response = await http.get(url,headers: headers);
+    if (response.statusCode == 200) {
+      var json = response.body;
+      return userResponseFromJson(json);
     } else {
       throw Exception('Failed to load post');
     }
