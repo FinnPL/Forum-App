@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:forum/models/post.dart';
 import 'package:forum/palette.dart';
@@ -6,20 +5,19 @@ import 'package:forum/services/local_services.dart';
 import 'package:forum/services/remote_services.dart';
 import 'package:forum/views/app_bar.dart';
 import 'package:forum/views/home_page.dart';
-import 'package:forum/views/login_page.dart';
 import 'package:forum/views/post_list_view.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({Key? key}) : super(key: key);
   @override
-  _AccountPageState createState() => _AccountPageState();
+  AccountPageState createState() => AccountPageState();
 }
 
-class _AccountPageState extends State<AccountPage> {
+class AccountPageState extends State<AccountPage> {
   bool _isLoading = true;
 
   String username = '';
-  String user_id = '';
+  String userId = '';
   String bio = 'Test Bio LOL SUI';
   Image profilePicture = Image.asset('assets/images/ghse_logo.png');
 
@@ -38,9 +36,9 @@ class _AccountPageState extends State<AccountPage> {
       });
     });
     LocalServices().getUserId().then((value) {
-      user_id = value!;
+      userId = value!;
 
-      RemoteService().getPostsOfUser(0,user_id).then((value) {
+      RemoteService().getPostsOfUser(0,userId).then((value) {
         posts = value;
         setState(() {
           _isLoadingPosts = false;
@@ -51,8 +49,8 @@ class _AccountPageState extends State<AccountPage> {
 
   addNextPage() {
     page++;
-    remoteService.getPostsOfUser(page,user_id).then((value) => setState(() {
-          posts!.addAll(value!);
+    remoteService.getPostsOfUser(page,userId).then((value) => setState(() {
+          posts!.addAll(value);
           if (value.isEmpty) end = true;
         }));
   }
@@ -99,9 +97,9 @@ class _AccountPageState extends State<AccountPage> {
                           ),
                           child: ListView.builder(
                             itemBuilder: (context, index) {
-                              int? post_length = posts?.length;
+                              int? postLength = posts?.length;
 
-                              if (index == post_length && !end) {
+                              if (index == postLength && !end) {
                                 addNextPage();
                                 return Container(
                                   padding: const EdgeInsets.all(16),
@@ -109,10 +107,11 @@ class _AccountPageState extends State<AccountPage> {
                                     child: CircularProgressIndicator(),
                                   ),
                                 );
-                              } else if (index < post_length!) {
+                              } else if (index < postLength!) {
                                 final post = posts![index];
                                 return PostWidget(post: post);
                               }
+                              return null;
                             },
                           ),
                         ),

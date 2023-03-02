@@ -4,14 +4,14 @@ import 'package:forum/services/remote_services.dart';
 import 'package:forum/views/home_page.dart';
 import 'package:forum/views/login_page.dart';
 
-class Splash_page extends StatefulWidget {
-  const Splash_page({super.key});
+class SplashPage extends StatefulWidget {
+  const SplashPage({super.key});
 
   @override
-  _Splash_pageState createState() => _Splash_pageState();
+  SplashPageState createState() => SplashPageState();
 }
 
-class _Splash_pageState extends State<Splash_page> {
+class SplashPageState extends State<SplashPage> {
   bool _isLoading = false;
 
   @override
@@ -26,18 +26,18 @@ class _Splash_pageState extends State<Splash_page> {
     });
 
     RemoteService remoteService = RemoteService();
-    bool isLoggedIn = await remoteService.isLoggedIn();
+    await remoteService.isLoggedIn().then((value) =>
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      )
+    );
 
     setState(() {
       _isLoading = false;
     });
 
-    if (isLoggedIn) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
-    }
+
   }
 
   @override
@@ -59,7 +59,7 @@ class _Splash_pageState extends State<Splash_page> {
                     onPressed: () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        MaterialPageRoute(builder: (context) => const LoginPage()),
                       );
                     },
                     child: const Text('Log In'),

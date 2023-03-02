@@ -1,25 +1,52 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:forum/models/post.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/views/app_bar.dart';
+import 'package:forum/views/home_page.dart';
 import 'package:forum/views/post_list_view.dart';
 
 class PostPage extends StatefulWidget {
-  final List<Post>? posts;
   final String search;
 
   const PostPage({
     Key? key,
-    required this.posts,
     required this.search,
   }) : super(key: key);
 
   @override
-  _PostPageState createState() => _PostPageState();
+  PostPageState createState() => PostPageState();
 }
 
-class _PostPageState extends State<PostPage> {
+class PostPageState extends State<PostPage> {
+  List<Post>? posts;
+  var isLoaded = false;
+  int page = 0;
+  bool end = false;
+
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  getData() async {
+    posts = await remoteService.search(widget.search,0);
+    if (posts != null) {
+      setState(() {
+        isLoaded = true;
+      });
+    }
+  }
+
+  addNextPage() {
+    page++;
+    remoteService.search(widget.search,page).then((value) => setState(() {
+      posts!.addAll(value!);
+      if (value.isEmpty) end = true;
+    }));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,15 +73,31 @@ class _PostPageState extends State<PostPage> {
               ),
             ),
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: ListView.builder(
-                  itemCount: widget.posts!.length,
-                  itemBuilder: (context, index) {
-                    return PostWidget(post: widget.posts![index]);
-                  },
-                ),
+              child: Visibility(
+              visible: isLoaded,
+              replacement: const Center(
+                child: CircularProgressIndicator(),
               ),
+              child: ListView.builder(
+                itemBuilder: (context, index) {
+                  int? postLength = posts?.length;
+
+                  if (index == postLength && !end) {
+                    addNextPage();
+                    return Container(
+                      padding: const EdgeInsets.all(16),
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  } else if (index < postLength!) {
+                    final post = posts![index];
+                    return PostWidget(post: post);
+                  }
+                  return null;
+                },
+              ),
+            ),
             ),
           ],
         ),

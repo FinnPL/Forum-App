@@ -33,7 +33,7 @@ class CommentWidget extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               Text(
-                '${comment.userName}',
+                comment.userName,
                 style: const TextStyle(
                   fontSize: 16,
                   color: Colors.black54,

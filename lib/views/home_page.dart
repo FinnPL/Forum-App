@@ -1,27 +1,23 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:forum/models/post.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/services/remote_services.dart';
-import 'package:forum/views/account_page.dart';
 import 'package:forum/views/app_bar.dart';
 import 'package:forum/views/create_post.dart';
-import 'package:forum/views/home_page.dart';
 import 'package:forum/views/post_list_view.dart';
-import 'package:forum/views/search_page.dart';
 
 
-RemoteService remoteService = new RemoteService();
+RemoteService remoteService = RemoteService();
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  HomePageState createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> {
   List<Post>? posts;
   var isLoaded = false;
   int page = 0;
@@ -52,7 +48,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print('build called');
     return Scaffold(
       appBar: buildMainAppBar(context),
       floatingActionButton: FloatingActionButton(
@@ -61,8 +56,8 @@ class _HomePageState extends State<HomePage> {
             builder: (_) => const AddPostWidget(),
           ));
         },
-        child: const Icon(Icons.add),
         backgroundColor: Palette.OrangeToDark,
+        child: const Icon(Icons.add),
       ),
       body: RefreshIndicator(
         color: Palette.OrangeToDark,
@@ -81,9 +76,9 @@ class _HomePageState extends State<HomePage> {
           ),
           child: ListView.builder(
             itemBuilder: (context, index) {
-              int? post_length = posts?.length;
+              int? postLength = posts?.length;
 
-              if (index == post_length && !end) {
+              if (index == postLength && !end) {
                 addNextPage();
                 return Container(
                   padding: const EdgeInsets.all(16),
@@ -91,10 +86,11 @@ class _HomePageState extends State<HomePage> {
                     child: CircularProgressIndicator(),
                   ),
                 );
-              } else if (index < post_length!) {
+              } else if (index < postLength!) {
                 final post = posts![index];
                 return PostWidget(post: post);
               }
+              return null;
             },
           ),
         ),

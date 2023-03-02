@@ -13,30 +13,31 @@ class FullScreenPostWidget extends StatefulWidget {
   const FullScreenPostWidget({Key? key, required this.post}) : super(key: key);
 
   @override
-  State<FullScreenPostWidget> createState() => _FullScreenPostWidgetState(post);
+  FullScreenPostWidgetState createState() => FullScreenPostWidgetState();
+
 }
 
-class _FullScreenPostWidgetState extends State<FullScreenPostWidget> {
+class FullScreenPostWidgetState extends State<FullScreenPostWidget> {
   late List<Comment> comments = [];
-  final Post post;
+  late Post post ;
   int page = 0;
   bool end = false;
   bool isLoaded = false;
-  TextEditingController comment_controller = TextEditingController();
+  TextEditingController commentController = TextEditingController();
 
 
-  _FullScreenPostWidgetState(this.post);
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    comment_controller.dispose();
+    commentController.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
+    post = widget.post;
     getData();
   }
 
@@ -153,11 +154,11 @@ class _FullScreenPostWidgetState extends State<FullScreenPostWidget> {
               child:
                 TextField(
                   cursorColor: Colors.black,
-                  controller: comment_controller,
+                  controller: commentController,
                   decoration:  InputDecoration(
                     suffixIcon: IconButton(onPressed: (){
-                      String text = comment_controller.text;
-                      if (comment_controller.text.isNotEmpty) {
+                      String text = commentController.text;
+                      if (commentController.text.isNotEmpty) {
                         remoteService.addComment(post.id, text).then((value) => {
                           if (value == true) {
                             setState(() {
@@ -165,7 +166,7 @@ class _FullScreenPostWidgetState extends State<FullScreenPostWidget> {
                             })
                           }
                         });
-                        comment_controller.clear();
+                        commentController.clear();
                       }
                     }
                         , icon: const Icon(Icons.send)),

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/views/app_bar.dart';
@@ -8,18 +7,18 @@ class AddPostWidget extends StatefulWidget {
   const AddPostWidget({Key? key}) : super(key: key);
 
   @override
-  _AddPostWidgetState createState() => _AddPostWidgetState();
+  AddPostWidgetState createState() => AddPostWidgetState();
 }
 
-class _AddPostWidgetState extends State<AddPostWidget> {
-  final title_controller = TextEditingController();
-  final content_controller = TextEditingController();
+class AddPostWidgetState extends State<AddPostWidget> {
+  final titleController = TextEditingController();
+  final contentController = TextEditingController();
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    title_controller.dispose();
-    content_controller.dispose();
+    titleController.dispose();
+    contentController.dispose();
     super.dispose();
   }
 
@@ -54,7 +53,7 @@ class _AddPostWidgetState extends State<AddPostWidget> {
                 child: SingleChildScrollView(
                   child: Column(children: [
                     TextField(
-                      controller: title_controller,
+                      controller: titleController,
                       decoration: const InputDecoration(
                         labelText: 'Title',
                         labelStyle: TextStyle(
@@ -70,7 +69,7 @@ class _AddPostWidgetState extends State<AddPostWidget> {
                     ),
                     const SizedBox(height: 16),
                     TextField(
-                      controller: content_controller,
+                      controller: contentController,
                       decoration: const InputDecoration(
                         labelText: 'Content',
                         labelStyle: TextStyle(
@@ -87,8 +86,8 @@ class _AddPostWidgetState extends State<AddPostWidget> {
                     const SizedBox(height: 16),
                     ElevatedButton.icon(
                         onPressed: () async {
-                          var titel = title_controller.text;
-                          var content = content_controller.text;
+                          var titel = titleController.text;
+                          var content = contentController.text;
                           if (titel.isEmpty | content.isEmpty) {
                             //show error message
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -104,8 +103,8 @@ class _AddPostWidgetState extends State<AddPostWidget> {
                           //return to home page
                           Navigator.of(context).pop();
                         },
-                        icon: Icon(Icons.send),
-                        label: Text('Post')),
+                        icon: const Icon(Icons.send),
+                        label: const Text('Post')),
                   ]),
                 ),
               ),

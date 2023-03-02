@@ -1,6 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 
 class LocalServices {
   Future<String?> getUserName() async{
@@ -20,9 +20,9 @@ class LocalServices {
   }
 
   Future<void> writeUserData(
-      String user_name, String user_id, String token, String expiration) async {
-    await storage.write(key: 'user_name', value: user_name);
-    await storage.write(key: 'user_id', value: user_id);
+      String userName, String userId, String token, String expiration) async {
+    await storage.write(key: 'user_name', value: userName);
+    await storage.write(key: 'user_id', value: userId);
     await storage.write(key: 'token', value: token);
     await storage.write(key: 'expiration', value: expiration);
   }

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/views/splash_page.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -18,7 +20,7 @@ class MyApp extends StatelessWidget {
           selectionHandleColor: Palette.OrangeToDark,
         ),
       ),
-      home: Splash_page(),
+      home: const SplashPage(),
     );
   }
 }

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/views/home_page.dart';
@@ -7,13 +6,13 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  LoginPageState createState() => LoginPageState();
 
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final user_controller = TextEditingController();
-  final password_controller = TextEditingController();
+class LoginPageState extends State<LoginPage> {
+  final userController = TextEditingController();
+  final passwordController = TextEditingController();
   late bool _obscureText;
   @override
   void initState() {
@@ -24,8 +23,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    user_controller.dispose();
-    password_controller.dispose();
+    userController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
@@ -76,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     const SizedBox(height: 16),
                     TextField(
-                      controller: user_controller,
+                      controller: userController,
                       decoration: const InputDecoration(
                         labelText: 'Username',
                         labelStyle: TextStyle(
@@ -93,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
                      const SizedBox(height: 16),
                     TextField(
                       obscureText: _obscureText,
-                      controller: password_controller,
+                      controller: passwordController,
                       decoration:  InputDecoration(
                         labelText: 'Password',
                         labelStyle: const TextStyle(
@@ -126,13 +125,13 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 16),
                     ElevatedButton.icon(
                         onPressed: () async {
-                          if (user_controller.text.isEmpty ||
-                              password_controller.text.isEmpty) {
+                          if (userController.text.isEmpty ||
+                              passwordController.text.isEmpty) {
                             return;
                           } else {
                             await remoteService
-                                .getToken(user_controller.text,
-                                    password_controller.text)
+                                .getToken(userController.text,
+                                    passwordController.text)
                                 .then((value) => Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(

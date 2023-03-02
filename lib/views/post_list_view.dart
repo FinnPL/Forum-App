@@ -1,16 +1,15 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:forum/models/post.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/services/local_services.dart';
-import 'package:forum/services/remote_services.dart';
 import 'package:forum/views/post_page.dart';
 
 class PostWidget extends StatelessWidget {
   final Post post;
 
-  const PostWidget({Key? key, required this.post});
+  const PostWidget({super.key, required this.post});
 
+  @override
   Widget build(BuildContext context) {
     String date = LocalServices().getFormatedDate(post.date);
 

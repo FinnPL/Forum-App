@@ -55,7 +55,7 @@ AppBar buildMainAppBar(BuildContext context) {
           color: Palette.BlueToLight[400]),
       IconButton(
         onPressed: () => Navigator.of(context)
-            .push(MaterialPageRoute(builder: (_) => AccountPage())),
+            .push(MaterialPageRoute(builder: (_) => const AccountPage())),
         icon: const Icon(Icons.person),
         color: Palette.BlueToLight[400],
       ),
@@ -107,7 +107,7 @@ AppBar buildProfileAppBar(BuildContext context) {
             Navigator.pop(context);
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => HomePage()),
+              MaterialPageRoute(builder: (context) => const HomePage()),
             );
           },
         ),

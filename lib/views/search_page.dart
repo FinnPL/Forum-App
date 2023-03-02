@@ -1,26 +1,21 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:forum/models/post.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/views/app_bar.dart';
-import 'package:forum/views/home_page.dart';
-import 'package:forum/views/post_list_view.dart';
 import 'package:forum/views/post_search_page.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
 
   @override
-  _SearchPageState createState() => _SearchPageState();
+  SearchPageState createState() => SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> {
-  final search_controller = TextEditingController();
-  List<Post>? posts;
+class SearchPageState extends State<SearchPage> {
+  final searchController = TextEditingController();
 
   @override
   void dispose() {
-    search_controller.dispose();
+    searchController.dispose();
     super.dispose();
   }
 
@@ -55,7 +50,7 @@ class _SearchPageState extends State<SearchPage> {
                 child: SingleChildScrollView(
                   child: Column(children: [
                     TextField(
-                      controller: search_controller,
+                      controller: searchController,
                       decoration: const InputDecoration(
                         labelText: 'Search',
                         labelStyle: TextStyle(
@@ -72,8 +67,7 @@ class _SearchPageState extends State<SearchPage> {
                     const SizedBox(height: 16),
                     ElevatedButton.icon(
                         onPressed: () async {
-                          var page = 0;
-                          var search = search_controller.text;
+                          var search = searchController.text;
                           if (search.isEmpty) {
                             //show error message
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -82,11 +76,11 @@ class _SearchPageState extends State<SearchPage> {
                                     Text('Please fill in all fields')));
                             return;
                           }
-                          posts = await remoteService.search(search, page);
-                          //show post page
+
+
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) =>
-                                  PostPage(posts: posts, search: search)));
+                                  PostPage(search: search)));
                         },
                         icon: const Icon(Icons.search),
                         label: const Text('Search')),
