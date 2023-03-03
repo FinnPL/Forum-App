@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:forum/models/comment.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/services/local_services.dart';
+import 'package:forum/views/user_page.dart';
 
 class CommentWidget extends StatelessWidget {
   const CommentWidget({
@@ -32,11 +33,23 @@ class CommentWidget extends StatelessWidget {
                 color: Colors.black54,
               ),
               const SizedBox(width: 4),
-              Text(
-                comment.userName,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.black54,
+              GestureDetector(
+                onTap: () {
+                   Navigator.push(
+                     context,
+                     MaterialPageRoute(
+                       builder: (context) => UserPage(
+                          userId: comment.userId,
+                       ),
+                     ),
+                   );
+                },
+                child: Text(
+                  comment.userName,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black54,
+                  ),
                 ),
               ),
               const SizedBox(width: 16),

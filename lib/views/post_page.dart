@@ -85,13 +85,14 @@ class FullScreenPostWidgetState extends State<FullScreenPostWidget> {
                         color: Colors.black54,
                       ),
                       const SizedBox(width: 4),
-                      TextButton(
-                        onPressed: () {
+                      GestureDetector(
+                        onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  UserPage(userId: post.userId),
+                              builder: (context) => UserPage(
+                                 userId: post.userId,
+                              ),
                             ),
                           );
                         },
