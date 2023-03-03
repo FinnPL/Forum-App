@@ -24,6 +24,7 @@ class FullScreenPostWidgetState extends State<FullScreenPostWidget> {
   bool end = false;
   bool isLoaded = false;
   TextEditingController commentController = TextEditingController();
+  bool isOwnPost = false;
 
   @override
   void dispose() {
@@ -44,6 +45,13 @@ class FullScreenPostWidgetState extends State<FullScreenPostWidget> {
     setState(() {
       isLoaded = true;
     });
+    LocalServices().getUserId().then((value) {
+      if (value == post.userId) {
+        setState(() {
+          isOwnPost = true;
+        });
+      }
+    });
   }
 
   addNextPage() {
@@ -52,6 +60,8 @@ class FullScreenPostWidgetState extends State<FullScreenPostWidget> {
           comments.addAll(value);
           if (value.isEmpty) end = true;
         }));
+    //reload the page
+
   }
 
   //Page to display a post in full screen including the post Content and Comments
@@ -60,7 +70,7 @@ class FullScreenPostWidgetState extends State<FullScreenPostWidget> {
     String date = LocalServices().getFormatedDate(post.date);
 
     return Scaffold(
-      appBar: buildAppBar(context),
+      appBar:isOwnPost ?  buildEditAppBar(context, post):buildAppBar(context),
       body: Container(
         color: Palette.BlueToDark,
         child: Column(

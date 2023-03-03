@@ -175,4 +175,27 @@ class RemoteService {
       throw Exception('Failed to load post');
     }
   }
+
+  Future<void> updatePost(String postId,Post post)async{
+    var url = Uri.parse('${apiUrl}post/$postId');
+    var token = await localServices.getToken();
+    headers.addAll({'Authorization': 'Bearer $token'});
+    var response = await http.put(url,headers: headers,body: jsonEncode(post.toJson()));
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('Failed to update post');
+    }
+  }
+
+  Future<void> deletePost(String id) async {
+    var url = Uri.parse('${apiUrl}post/del/$id');
+    var token = await localServices.getToken();
+    headers.addAll({'Authorization': 'Bearer $token'});
+    var response = await http.delete(url,headers: headers);
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('Failed to delete post');
+    }
+  }
+
 }

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:forum/models/post.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/services/local_services.dart';
+import 'package:forum/services/remote_services.dart';
 import 'package:forum/views/account_page.dart';
+import 'package:forum/views/editPostPage.dart';
 import 'package:forum/views/home_page.dart';
 import 'package:forum/views/login_page.dart';
 import 'package:forum/views/search_page.dart';
@@ -87,30 +90,100 @@ AppBar buildProfileAppBar(BuildContext context) {
       ],
     ),
     actions: [
-        IconButton(
-          icon: const Icon(Icons.logout),
-          color: Palette.BlueToLight[400],
-          onPressed: () {
-            LocalServices().deleteUserData();
-            Navigator.pop(context);
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const LoginPage()),
-            );
-          },
+      IconButton(
+        icon: const Icon(Icons.logout),
+        color: Palette.BlueToLight[400],
+        onPressed: () {
+          LocalServices().deleteUserData();
+          Navigator.pop(context);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginPage()),
+          );
+        },
+      ),
+      IconButton(
+        icon: const Icon(Icons.edit),
+        color: Palette.BlueToLight[400],
+        onPressed: () {
+          //TODO: Implement edit profile
+          Navigator.pop(context);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+        },
+      ),
+    ],
+  );
+}
+
+AppBar buildEditAppBar(BuildContext context, Post post) {
+  return AppBar(
+    leading: IconButton(
+      color: Palette.OrangeToLight,
+      icon: const Icon(Icons.arrow_back_ios),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    ),
+    titleSpacing: 0,
+    title: Row(
+      children: <Widget>[
+        Image.asset(
+          'assets/images/ghse_logo.png',
+          fit: BoxFit.contain,
+          height: 32,
         ),
-        IconButton(
-          icon: const Icon(Icons.edit),
-          color: Palette.BlueToLight[400],
-          onPressed: () {
-            //TODO: Implement edit profile
-            Navigator.pop(context);
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const HomePage()),
-            );
-          },
+        const Text(
+          ' Forum',
+          style: TextStyle(color: Palette.OrangeToLight),
         ),
+      ],
+    ),
+    actions: [
+      IconButton(
+        icon: const Icon(Icons.edit),
+        color: Palette.BlueToLight[400],
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => EditPostPage(post: post)),
+          );
+
+        },
+      ),
+      IconButton(
+        icon: const Icon(Icons.delete),
+        color: Palette.BlueToLight[400],
+        onPressed: () {
+          //Show popup
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text("Delete Post"),
+                content: const Text("Are you sure you want to delete this post?"),
+                actions: [
+                  TextButton(
+                    child: const Text("Cancel"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: const Text("Delete"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                      RemoteService().deletePost(post.id);
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      )
     ],
   );
 }
