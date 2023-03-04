@@ -24,7 +24,7 @@ class UserPageState extends State<UserPage> {
 
   //TEST***************
   String bio = 'Test Bio LOL SUI';
-  Image profilePicture = Image.asset('assets/images/ghse_logo.png');
+  late Image profilePicture = Image.asset('assets/images/def1.png');
   //********************
 
   bool _isLoadingPosts = true;
@@ -36,6 +36,11 @@ class UserPageState extends State<UserPage> {
   void initState() {
     super.initState();
     userId = widget.userId;
+    RemoteService().getProfilePicture(userId).then((value) {
+      setState(() {
+        profilePicture = Image.memory(value);
+      });
+    });
     RemoteService().getUserByUUID(userId).then((value) =>
       setState(() {
         user = value;

@@ -19,7 +19,7 @@ class AccountPageState extends State<AccountPage> {
   String username = '';
   String userId = '';
   String bio = 'Test Bio LOL SUI';
-  Image profilePicture = Image.asset('assets/images/ghse_logo.png');
+  late Image profilePicture = Image.asset('assets/images/def1.png');
 
   bool _isLoadingPosts = true;
   List<Post>? posts;
@@ -38,6 +38,11 @@ class AccountPageState extends State<AccountPage> {
     LocalServices().getUserId().then((value) {
       userId = value!;
 
+      RemoteService().getProfilePicture(userId).then((value) {
+        setState(() {
+          profilePicture = Image.memory(value);
+        });
+      });
       RemoteService().getPostsOfUser(0,userId).then((value) {
         posts = value;
         setState(() {

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:forum/models/auth.dart';
 import 'package:forum/models/auth_response.dart';
@@ -12,7 +13,7 @@ import 'package:http/http.dart' as http;
 final LocalServices localServices = LocalServices();
 
 class RemoteService {
-  final apiUrl = 'http://13.94.152.122:8080/api/v1/';
+  final apiUrl = 'http://192.168.178.54:8080/api/v1/';
 
   var headers = {
     'Content-Type': 'application/json',
@@ -198,4 +199,16 @@ class RemoteService {
     }
   }
 
+  Future<Uint8List> getProfilePicture(String id) async{
+    var url = Uri.parse('${apiUrl}file/profile/$id');
+    var token = await localServices.getToken();
+    headers.addAll({'Authorization': 'Bearer $token'});
+    var response = await http.get(url,headers: headers);
+    if (response.statusCode == 200 && response.headers['content-type']!.contains('image')){
+        var bytes = response.bodyBytes;
+        return bytes;
+    } else {
+      throw Exception('Failed to load post');
+    }
+  }
 }
