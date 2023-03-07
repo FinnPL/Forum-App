@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:forum/models/auth.dart';
 import 'package:forum/models/auth_response.dart';
@@ -210,5 +211,26 @@ class RemoteService {
     } else {
       throw Exception('Failed to load post');
     }
+  }
+
+  Future<void> updateBio(String bio) async {
+    var url = Uri.parse('${apiUrl}user/update/$bio');
+    var token = await localServices.getToken();
+    headers.addAll({'Authorization': 'Bearer $token'});
+    var response = await http.put(url,headers: headers);
+
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('Failed to update bio');
+    }
+  }
+
+  Future<void> updateProfilePicture(Image image) async {
+    var url = Uri.parse('${apiUrl}file/profile');
+    var token = await localServices.getToken();
+    headers.addAll({'Authorization': 'Bearer $token'});
+    var byteData = await image.toByteData();
+
+    var response = await http.put(url,headers: headers,);
   }
 }

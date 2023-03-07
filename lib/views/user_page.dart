@@ -22,10 +22,9 @@ class UserPageState extends State<UserPage> {
   UserResponse? user;
   bool isUsersPage = false;
 
-  //TEST***************
-  String bio = 'Test Bio LOL SUI';
+
+  String bio = '';
   late Image profilePicture = Image.asset('assets/images/def1.png');
-  //********************
 
   bool _isLoadingPosts = true;
   List<Post>? posts;
@@ -44,6 +43,7 @@ class UserPageState extends State<UserPage> {
     RemoteService().getUserByUUID(userId).then((value) =>
       setState(() {
         user = value;
+        bio = value.bio;
         _isLoading = false;
       })).then((value) => LocalServices().getUserId().then((value) {
         if (value == userId) {

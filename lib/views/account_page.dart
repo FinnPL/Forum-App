@@ -18,7 +18,7 @@ class AccountPageState extends State<AccountPage> {
 
   String username = '';
   String userId = '';
-  String bio = 'Test Bio LOL SUI';
+  String bio = '';
   late Image profilePicture = Image.asset('assets/images/def1.png');
 
   bool _isLoadingPosts = true;
@@ -37,6 +37,12 @@ class AccountPageState extends State<AccountPage> {
     });
     LocalServices().getUserId().then((value) {
       userId = value!;
+
+      RemoteService().getUserByUUID(userId).then((value) {
+        setState(() {
+          bio = value.bio;
+        });
+      });
 
       RemoteService().getProfilePicture(userId).then((value) {
         setState(() {

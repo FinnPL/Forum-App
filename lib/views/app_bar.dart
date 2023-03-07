@@ -5,9 +5,9 @@ import 'package:forum/services/local_services.dart';
 import 'package:forum/services/remote_services.dart';
 import 'package:forum/views/account_page.dart';
 import 'package:forum/views/editPostPage.dart';
-import 'package:forum/views/home_page.dart';
 import 'package:forum/views/login_page.dart';
 import 'package:forum/views/search_page.dart';
+import 'package:forum/views/updateProfile.dart';
 
 AppBar buildAppBar(BuildContext context) {
   return AppBar(
@@ -106,11 +106,8 @@ AppBar buildProfileAppBar(BuildContext context) {
         icon: const Icon(Icons.edit),
         color: Palette.BlueToLight[400],
         onPressed: () {
-          //TODO: Implement edit profile
-          Navigator.pop(context);
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => UpdateProfileWidget()),
           );
         },
       ),
