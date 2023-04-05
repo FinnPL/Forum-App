@@ -3,11 +3,11 @@ import 'package:forum/models/post.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/services/local_services.dart';
 import 'package:forum/services/remote_services.dart';
-import 'package:forum/views/account_page.dart';
 import 'package:forum/views/editPostPage.dart';
 import 'package:forum/views/login_page.dart';
 import 'package:forum/views/search_page.dart';
 import 'package:forum/views/updateProfile.dart';
+import 'package:forum/views/user_page.dart';
 
 AppBar buildAppBar(BuildContext context) {
   return AppBar(
@@ -57,8 +57,15 @@ AppBar buildMainAppBar(BuildContext context) {
           icon: const Icon(Icons.search),
           color: Palette.BlueToLight[400]),
       IconButton(
-        onPressed: () => Navigator.of(context)
-            .push(MaterialPageRoute(builder: (_) => const AccountPage())),
+        onPressed: () {
+          localServices.getUserId().then((value)
+          {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) =>  UserPage(userId: value!))
+            );
+          }
+          );
+        },
         icon: const Icon(Icons.person),
         color: Palette.BlueToLight[400],
       ),

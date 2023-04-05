@@ -43,7 +43,7 @@ class UserPageState extends State<UserPage> {
     RemoteService().getUserByUUID(userId).then((value) =>
       setState(() {
         user = value;
-        bio = value.bio;
+        bio = value.bio ?? "";
         _isLoading = false;
       })).then((value) => LocalServices().getUserId().then((value) {
         if (value == userId) {
@@ -84,7 +84,7 @@ class UserPageState extends State<UserPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 CircleAvatar(
-                  radius: 50,
+                  radius: 90,
                   backgroundImage: profilePicture.image,
                 ),
                 const SizedBox(height: 16),

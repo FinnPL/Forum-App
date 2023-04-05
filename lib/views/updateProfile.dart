@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:forum/palette.dart';
-import 'package:forum/views/account_page.dart';
+import 'package:forum/services/remote_services.dart';
 import 'package:forum/views/app_bar.dart';
 import 'package:forum/views/home_page.dart';
+import 'package:forum/views/user_page.dart';
 
 class UpdateProfileWidget extends StatefulWidget {
   @override
@@ -46,8 +47,12 @@ class UpdateProfileWidgetState extends State<UpdateProfileWidget>{
             ElevatedButton(
               onPressed: ()  {
                   remoteService.updateBio(controller.text).then((value) {
-                    Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => const AccountPage())
+                    localServices.getUserId().then((value)
+                    {
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) =>  UserPage(userId: value!))
+                      );
+                    }
                     );
                   }
                   );
