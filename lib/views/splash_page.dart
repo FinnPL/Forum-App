@@ -12,7 +12,7 @@ class SplashPage extends StatefulWidget {
 }
 
 class SplashPageState extends State<SplashPage> {
-  bool _isLoading = false;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -21,23 +21,19 @@ class SplashPageState extends State<SplashPage> {
   }
 
   Future<void> checkIfLoggedIn() async {
-    setState(() {
-      _isLoading = true;
-    });
-
     RemoteService remoteService = RemoteService();
-    await remoteService.isLoggedIn().then((value) =>
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      )
-    );
-
-    setState(() {
-      _isLoading = false;
+    await remoteService.isLoggedIn().then((value) {
+      if (value) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     });
-
-
   }
 
   @override
