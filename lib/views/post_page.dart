@@ -3,6 +3,7 @@ import 'package:forum/models/comment.dart';
 import 'package:forum/models/post.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/services/local_services.dart';
+import 'package:forum/services/remote_services.dart';
 import 'package:forum/views/app_bar.dart';
 import 'package:forum/views/comment_list_view.dart';
 import 'package:forum/views/home_page.dart';
@@ -25,6 +26,7 @@ class FullScreenPostWidgetState extends State<FullScreenPostWidget> {
   bool isLoaded = false;
   TextEditingController commentController = TextEditingController();
   bool isOwnPost = false;
+  Image? profilePicture;
 
   @override
   void dispose() {
@@ -41,6 +43,11 @@ class FullScreenPostWidgetState extends State<FullScreenPostWidget> {
   }
 
   getData() async {
+    RemoteService().getPostPicture(post.id).then((value) {
+      setState(() {
+        profilePicture = Image.memory(value);
+      });
+    });
     comments = await remoteService.getComments(0, post.id);
     setState(() {
       isLoaded = true;
@@ -144,6 +151,12 @@ class FullScreenPostWidgetState extends State<FullScreenPostWidget> {
                       fontSize: 16,
                     ),
                   ),
+                  // Picture here if it exists
+                  if (profilePicture != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: profilePicture!,
+                    ),
                 ],
               ),
             ),

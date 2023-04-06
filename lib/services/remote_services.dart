@@ -213,6 +213,19 @@ class RemoteService {
     }
   }
 
+  Future<Uint8List> getPostPicture(String id) async{
+    var url = Uri.parse('${apiUrl}file/post/$id');
+    var token = await localServices.getToken();
+    headers.addAll({'Authorization': 'Bearer $token'});
+    var response = await http.get(url,headers: headers);
+    if (response.statusCode == 200 && response.headers['content-type']!.contains('image')){
+      var bytes = response.bodyBytes;
+      return bytes;
+    } else {
+      throw Exception('Failed to load Picture');
+    }
+  }
+
   Future<void> updateBio(String bio) async {
     var url = Uri.parse('${apiUrl}user/update/$bio');
     var token = await localServices.getToken();
