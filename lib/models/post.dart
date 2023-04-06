@@ -18,6 +18,7 @@ class Post {
     required this.userId,
     required this.userName,
     required this.date,
+    required this.edited,
   });
 
   String id;
@@ -25,6 +26,7 @@ class Post {
   String content;
   String userId;
   String userName;
+  bool edited;
   DateTime date;
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
@@ -34,6 +36,7 @@ class Post {
         userId: json["user_id"],
         userName: json["user_name"],
         date: DateTime.parse(json["date"]),
+        edited: json["edited"],
       );
 
   Map<String, dynamic> toJson() => {

@@ -135,8 +135,11 @@ class FullScreenPostWidgetState extends State<FullScreenPostWidget> {
                           color: Colors.black54,
                         ),
                       ),
+                      const SizedBox(width: 16),
+                      if (post.edited) const Text('(Edited)', style: TextStyle(fontStyle: FontStyle.italic),),
                     ],
                   ),
+                  const SizedBox(height: 10),
                   Text(
                     post.title,
                     style: const TextStyle(
