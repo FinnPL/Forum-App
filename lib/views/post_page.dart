@@ -26,7 +26,7 @@ class FullScreenPostWidgetState extends State<FullScreenPostWidget> {
   bool isLoaded = false;
   TextEditingController commentController = TextEditingController();
   bool isOwnPost = false;
-  Image? profilePicture;
+  Image? image;
 
   @override
   void dispose() {
@@ -45,7 +45,7 @@ class FullScreenPostWidgetState extends State<FullScreenPostWidget> {
   getData() async {
     RemoteService().getPostPicture(post.id).then((value) {
       setState(() {
-        profilePicture = Image.memory(value);
+        image = Image.memory(value);
       });
     });
     comments = await remoteService.getComments(0, post.id);
@@ -77,7 +77,7 @@ class FullScreenPostWidgetState extends State<FullScreenPostWidget> {
     String date = LocalServices().getFormatedDate(post.date);
 
     return Scaffold(
-      appBar:isOwnPost ?  buildEditAppBar(context, post):buildAppBar(context),
+      appBar:isOwnPost ?  buildEditAppBar(context, post,image):buildAppBar(context),
       body: Container(
         color: Palette.BlueToDark,
         child: Column(
@@ -155,10 +155,10 @@ class FullScreenPostWidgetState extends State<FullScreenPostWidget> {
                     ),
                   ),
                   // Picture here if it exists
-                  if (profilePicture != null)
+                  if (image != null)
                     Padding(
                       padding: const EdgeInsets.only(top: 16),
-                      child: profilePicture!,
+                      child: image!,
                     ),
                 ],
               ),

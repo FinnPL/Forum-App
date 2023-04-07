@@ -25,7 +25,7 @@ class AddPostWidgetState extends State<AddPostWidget> {
       final imageTemp = File(image.path);
       setState(() => this.image = imageTemp);
     } on PlatformException catch(e) {
-      print('Failed to pick image: $e');
+     rethrow;
     }
   }
 

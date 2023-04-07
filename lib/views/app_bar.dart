@@ -71,7 +71,7 @@ AppBar buildMainAppBar(BuildContext context) {
 }
 
 
-AppBar buildEditAppBar(BuildContext context, Post post) {
+AppBar buildEditAppBar(BuildContext context, Post post, Image? image) {
   return AppBar(
     leading: IconButton(
       color: Palette.OrangeToLight,
@@ -100,7 +100,7 @@ AppBar buildEditAppBar(BuildContext context, Post post) {
         color: Palette.BlueToLight[400],
         onPressed: () {
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => EditPostPage(post: post)),
+            MaterialPageRoute(builder: (_) => EditPostPage(post: post, image: image)),
           );
 
         },

@@ -1,13 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:forum/models/post.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/services/remote_services.dart';
 import 'package:forum/views/app_bar.dart';
 import 'package:forum/views/post_page.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditPostPage extends StatefulWidget {
-  const EditPostPage({Key? key, required this.post}) : super(key: key);
+  const EditPostPage({Key? key, required this.post, required this.image}) : super(key: key);
   final Post post;
+  final Image? image;
 
   @override
   editPostPageState createState() => editPostPageState();
@@ -18,12 +23,24 @@ class EditPostPage extends StatefulWidget {
 class editPostPageState extends State<EditPostPage> {
   final titleController = TextEditingController();
   final contentController = TextEditingController();
-
+  File? image;
+  late Image? prevImage;
+  Future pickImage() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if(image == null) return;
+      final imageTemp = File(image.path);
+      setState(() => this.image = imageTemp);
+    } on PlatformException catch(e) {
+     rethrow;
+    }
+  }
   @override
   void initState() {
     super.initState();
     titleController.text = widget.post.title;
     contentController.text = widget.post.content;
+    prevImage = widget.image;
   }
 
   @override
@@ -95,6 +112,19 @@ class editPostPageState extends State<EditPostPage> {
                       style: const TextStyle(color: Colors.white),
                     ),
                     const SizedBox(height: 16),
+                    if (image != null)Padding(padding: const EdgeInsets.only(top: 16), child: Image.file(image!),)
+                    else if (prevImage != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: prevImage,
+                      ),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        pickImage();
+                      },
+                      label: const Text('Upload Picture'),
+                      icon: const Icon(Icons.image),
+                    ),
                     ElevatedButton.icon(
                         onPressed: () async {
                           var titel = titleController.text;
@@ -110,6 +140,7 @@ class editPostPageState extends State<EditPostPage> {
                           widget.post.title = titel;
                           widget.post.content = content;
                           RemoteService().updatePost(widget.post.id,widget.post);
+                          RemoteService().uploadImage(image!,widget.post.id);
                           //return to home page
                           Navigator.of(context).pop();
                           //reload post page with new post
