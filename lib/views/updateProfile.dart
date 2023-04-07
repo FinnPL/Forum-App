@@ -9,10 +9,12 @@ import 'package:forum/palette.dart';
 import 'package:forum/services/remote_services.dart';
 import 'package:forum/views/app_bar.dart';
 import 'package:forum/views/home_page.dart';
-import 'package:forum/views/user_page.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UpdateProfileWidget extends StatefulWidget {
+  final Image profilePicture;
+  final String bio;
+  const UpdateProfileWidget({Key? key, required this.profilePicture, required this.bio}) : super(key: key);
   @override
   UpdateProfileWidgetState createState() => UpdateProfileWidgetState();
 }
@@ -20,7 +22,7 @@ class UpdateProfileWidget extends StatefulWidget {
 class UpdateProfileWidgetState extends State<UpdateProfileWidget>{
   final controller = TextEditingController();
   File? image;
-
+  Image? profilePicture;
   Future pickImage() async {
     try {
       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -30,6 +32,12 @@ class UpdateProfileWidgetState extends State<UpdateProfileWidget>{
     } on PlatformException catch(e) {
       print('Failed to pick image: $e');
     }
+  }
+  @override
+  void initState() {
+    super.initState();
+    controller.text = widget.bio;
+    profilePicture = widget.profilePicture;
   }
 
   @override
@@ -44,23 +52,41 @@ class UpdateProfileWidgetState extends State<UpdateProfileWidget>{
     return Scaffold(
       appBar: buildAppBar(context),
       body: Container(
+        padding: const EdgeInsets.all(20),
+        color: Palette.BlueToLight[50],
         child: Column(
           children: [
             const SizedBox(height: 20),
-            const Text('Update Profile'),
-            const SizedBox(height: 20),
+            const Text(
+              'Update Profile',
+              style: TextStyle(
+                color: Palette.OrangeToDark,
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
             if(image != null)
               CircleAvatar(
-                radius: 70,
+                radius: 90,
                 backgroundImage: FileImage(image!),
-              ),
-            ElevatedButton(
+              )
+              else
+               CircleAvatar(
+                radius: 90,
+                backgroundImage: profilePicture?.image,
+              )
+            ,
+            ElevatedButton.icon(
               onPressed: () {
                 pickImage();
               },
-              child: const Text('Upload Image'),
+              label: const Text('Upload Profile Picture'),
+              icon: const Icon(Icons.image),
             ),
+            const SizedBox(height: 10),
             TextField(
+              style: const TextStyle(color: Colors.white),
               controller: controller,
               decoration: const InputDecoration(
                 labelText: 'Bio',
@@ -73,22 +99,23 @@ class UpdateProfileWidgetState extends State<UpdateProfileWidget>{
                   borderSide: BorderSide(color: Palette.OrangeToDark),
                 ),
               ),
+
             ),
-            ElevatedButton(
+            const SizedBox(height:10),
+            ElevatedButton.icon(
+              label: const Text('Confirm'),
+              icon: const Icon(Icons.save),
               onPressed: ()  {
-                  remoteService.uploadImage(image!);
+                  if (image != null) remoteService.uploadImage(image!);
                   remoteService.updateBio(controller.text).then((value) {
                     localServices.getUserId().then((value)
                     {
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) =>  UserPage(userId: value!))
-                      );
+                      Navigator.pop(context);
                     }
                     );
                   }
                   );
               },
-              child: const Text('Update Profile'),
             ),
           ],
         ),

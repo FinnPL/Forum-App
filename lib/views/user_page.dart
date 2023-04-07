@@ -7,6 +7,9 @@ import 'package:forum/services/remote_services.dart';
 import 'package:forum/views/app_bar.dart';
 import 'package:forum/views/home_page.dart';
 import 'package:forum/views/post_list_view.dart';
+import 'package:forum/views/updateProfile.dart';
+
+import 'login_page.dart';
 
 class UserPage extends StatefulWidget {
   final String userId;
@@ -72,7 +75,52 @@ class UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: isUsersPage ? buildProfileAppBar(context) : buildAppBar(context),
+      appBar: isUsersPage ? AppBar(
+        leading: IconButton(
+          color: Palette.OrangeToLight,
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        titleSpacing: 0,
+        title: Row(
+          children: <Widget>[
+            Image.asset(
+              'assets/images/ghse_logo.png',
+              fit: BoxFit.contain,
+              height: 32,
+            ),
+            const Text(
+              ' Forum',
+              style: TextStyle(color: Palette.OrangeToLight),
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            color: Palette.BlueToLight[400],
+            onPressed: () {
+              LocalServices().deleteUserData();
+              Navigator.pop(context);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.edit),
+            color: Palette.BlueToLight[400],
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => UpdateProfileWidget(profilePicture: profilePicture, bio: bio,)),
+              );
+            },
+          ),
+        ],
+      ) : buildAppBar(context),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Container(
