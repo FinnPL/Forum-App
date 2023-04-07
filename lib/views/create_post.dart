@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/views/app_bar.dart';
 import 'package:forum/views/home_page.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddPostWidget extends StatefulWidget {
   const AddPostWidget({Key? key}) : super(key: key);
@@ -13,6 +17,17 @@ class AddPostWidget extends StatefulWidget {
 class AddPostWidgetState extends State<AddPostWidget> {
   final titleController = TextEditingController();
   final contentController = TextEditingController();
+  File? image;
+  Future pickImage() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if(image == null) return;
+      final imageTemp = File(image.path);
+      setState(() => this.image = imageTemp);
+    } on PlatformException catch(e) {
+      print('Failed to pick image: $e');
+    }
+  }
 
   @override
   void dispose() {
@@ -84,6 +99,19 @@ class AddPostWidgetState extends State<AddPostWidget> {
                       style: const TextStyle(color: Colors.white),
                     ),
                     const SizedBox(height: 16),
+                    if (image != null)
+                      Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: Image.file(image!),
+                        ),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          pickImage();
+                        },
+                        label: const Text('Upload Picture'),
+                        icon: const Icon(Icons.image),
+                      ),
+                    const SizedBox(height: 16),
                     ElevatedButton.icon(
                         onPressed: () async {
                           var titel = titleController.text;
@@ -99,8 +127,12 @@ class AddPostWidgetState extends State<AddPostWidget> {
                           remoteService.addPost(
                             title: titel,
                             content: content,
-                          );
-                          //return to home page
+                          ).then((value) => {
+                              if (image != null) {
+                              remoteService.uploadImage(
+                                  image!, value.id)
+                          }
+                          });
                           Navigator.of(context).pop();
                         },
                         icon: const Icon(Icons.send),

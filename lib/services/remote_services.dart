@@ -70,7 +70,7 @@ class RemoteService {
     }
   }
 
-  Future<void> addPost({required String title, required String content}) async {
+  Future<Post> addPost({required String title, required String content}) async {
     var url = Uri.parse('${apiUrl}post/add');
     var token = await localServices.getToken();
     headers.addAll({'Authorization': 'Bearer $token'});
@@ -87,7 +87,12 @@ class RemoteService {
       headers: headers,
       body: body,
     );
-    if (response.statusCode == 201) {} else {}
+    if (response.statusCode == 201) {
+      var json = response.body;
+      return Post.fromJson(jsonDecode(json));
+    } else {
+      throw Exception('Failed to add post');
+    }
   }
 
   Future<List<Post>?> search(String text, int page) async {
@@ -241,8 +246,25 @@ class RemoteService {
   }
 
 
-  Future<void> uploadImage(File file) async {
+  Future<void> uploadProfileImage(File file) async {
     var uri = Uri.parse('${apiUrl}file/profile');
+    var token = await localServices.getToken();
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'image/${file.path.split('.').last}',
+    };
+    final request = http.MultipartRequest('POST', uri);
+    request.headers.addAll(headers);
+    request.files.add(await http.MultipartFile.fromPath('file', file.path,
+        contentType: MediaType('image', file.path.split('.').last)));
+    final response = await request.send();
+    if(response.statusCode != 200) {
+      throw Exception('Failed to upload image');
+    }
+  }
+
+  Future<void> uploadImage(File file,String id) async {
+    var uri = Uri.parse('${apiUrl}file/post/$id');
     var token = await localServices.getToken();
     final headers = {
       'Authorization': 'Bearer $token',

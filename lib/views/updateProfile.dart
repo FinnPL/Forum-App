@@ -106,7 +106,7 @@ class UpdateProfileWidgetState extends State<UpdateProfileWidget>{
               label: const Text('Confirm'),
               icon: const Icon(Icons.save),
               onPressed: ()  {
-                  if (image != null) remoteService.uploadImage(image!);
+                  if (image != null) remoteService.uploadProfileImage(image!);
                   remoteService.updateBio(controller.text).then((value) {
                     localServices.getUserId().then((value)
                     {
