@@ -68,7 +68,6 @@ class FullScreenPostWidgetState extends State<FullScreenPostWidget> {
           if (value.isEmpty) end = true;
         }));
     //reload the page
-
   }
 
   //Page to display a post in full screen including the post Content and Comments
@@ -77,166 +76,178 @@ class FullScreenPostWidgetState extends State<FullScreenPostWidget> {
     String date = LocalServices().getFormatedDate(post.date);
 
     return Scaffold(
-      appBar:isOwnPost ?  buildEditAppBar(context, post,image):buildAppBar(context),
-      body: Container(
-        color: Palette.BlueToDark,
-        child: Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Palette.BlueToLight[400],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              margin: const EdgeInsets.only(
-                  top: 16, bottom: 16, left: 16, right: 16),
-              padding: const EdgeInsets.only(
-                  top: 16, bottom: 16, left: 16, right: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.account_circle,
-                        size: 15,
-                        color: Colors.black54,
-                      ),
-                      const SizedBox(width: 4),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => UserPage(
-                                 userId: post.userId,
+      backgroundColor: Palette.BlueToDark,
+      appBar: isOwnPost
+          ? buildEditAppBar(context, post, image)
+          : buildAppBar(context),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Container(
+          color: Palette.BlueToDark,
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Palette.BlueToLight[400],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                margin: const EdgeInsets.only(
+                    top: 16, bottom: 16, left: 16, right: 16),
+                padding: const EdgeInsets.only(
+                    top: 16, bottom: 16, left: 16, right: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.account_circle,
+                          size: 15,
+                          color: Colors.black54,
+                        ),
+                        const SizedBox(width: 4),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UserPage(
+                                  userId: post.userId,
+                                ),
                               ),
+                            );
+                          },
+                          child: Text(
+                            post.userName,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.black54,
                             ),
-                          );
-                        },
-                        child: Text(
-                          post.userName,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        const Icon(
+                          Icons.access_time,
+                          size: 15,
+                          color: Colors.black54,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          date,
                           style: const TextStyle(
                             fontSize: 16,
                             color: Colors.black54,
                           ),
                         ),
+                        const SizedBox(width: 16),
+                        if (post.edited)
+                          const Text(
+                            '(Edited)',
+                            style: TextStyle(fontStyle: FontStyle.italic),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      post.title,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(width: 16),
-                      const Icon(
-                        Icons.access_time,
-                        size: 15,
-                        color: Colors.black54,
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      post.content,
+                      style: const TextStyle(
+                        fontSize: 16,
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        date,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.black54,
-                        ),
+                    ),
+                    // Picture here if it exists
+                    if (image != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: image!,
                       ),
-                      const SizedBox(width: 16),
-                      if (post.edited) const Text('(Edited)', style: TextStyle(fontStyle: FontStyle.italic),),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    post.title,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    post.content,
-                    style: const TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                  // Picture here if it exists
-                  if (image != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: image!,
-                    ),
-                ],
-              ),
-            ),
-            Container(
-              color: Palette.BlueToLight,
-              padding: const EdgeInsets.only(
-                  top: 16, bottom: 16, left: 16, right: 16),
-              child: Row(
-                children: const [
-                  Text(
-                    'Comments',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Palette.OrangeToDark,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                  top: 0, bottom: 16, left: 16, right: 16),
-              child: TextField(
-                cursorColor: Colors.black,
-                controller: commentController,
-                decoration: InputDecoration(
-                  suffixIcon: IconButton(
-                      onPressed: () {
-                        String text = commentController.text;
-                        if (commentController.text.isNotEmpty) {
-                          remoteService
-                              .addComment(post.id, text)
-                              .then((value) => {
-                                    if (value == true)
-                                      {
-                                        setState(() {
-                                          comments.insert(
-                                              0,
-                                              Comment(
-                                                  userId: '0',
-                                                  content: text,
-                                                  date: DateTime.now(),
-                                                  userName: 'Me',
-                                                  id: '0'));
-                                        })
-                                      }
-                                  });
-                          commentController.clear();
-                        }
-                      },
-                      icon: const Icon(Icons.send)),
-                  fillColor: Palette.Back,
-                  filled: true,
-                  hintText: 'Write a comment',
+                  ],
                 ),
-                style: const TextStyle(color: Colors.black),
               ),
-            ),
-            Expanded(child: ListView.builder(itemBuilder: (context, index) {
-              int? postLength = comments.length;
-
-              if (index == postLength && !end) {
-                addNextPage();
-                return Container(
-                  padding: const EdgeInsets.all(16),
-                  child: const Center(
-                    child: CircularProgressIndicator(),
+              Container(
+                color: Palette.BlueToLight,
+                padding: const EdgeInsets.only(
+                    top: 16, bottom: 16, left: 16, right: 16),
+                child: Row(
+                  children: const [
+                    Text(
+                      'Comments',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Palette.OrangeToDark,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 0, bottom: 16, left: 16, right: 16),
+                child: TextField(
+                  cursorColor: Colors.black,
+                  controller: commentController,
+                  decoration: InputDecoration(
+                    suffixIcon: IconButton(
+                        onPressed: () {
+                          String text = commentController.text;
+                          if (commentController.text.isNotEmpty) {
+                            remoteService
+                                .addComment(post.id, text)
+                                .then((value) => {
+                                      if (value == true)
+                                        {
+                                          setState(() {
+                                            comments.insert(
+                                                0,
+                                                Comment(
+                                                    userId: '0',
+                                                    content: text,
+                                                    date: DateTime.now(),
+                                                    userName: 'Me',
+                                                    id: '0'));
+                                          })
+                                        }
+                                    });
+                            commentController.clear();
+                          }
+                        },
+                        icon: const Icon(Icons.send)),
+                    fillColor: Palette.Back,
+                    filled: true,
+                    hintText: 'Write a comment',
                   ),
-                );
-              } else if (index < postLength) {
-                final comment = comments[index];
-                return CommentWidget(comment: comment);
-              }
-              return null;
-            })),
-          ],
+                  style: const TextStyle(color: Colors.black),
+                ),
+              ),
+              ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    int? postLength = comments.length;
+                    if (index == postLength && !end) {
+                      addNextPage();
+                      return Container(
+                        padding: const EdgeInsets.all(16),
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    } else if (index < postLength) {
+                      final comment = comments[index];
+                      return CommentWidget(comment: comment);
+                    }
+                    return null;
+                  }),
+            ],
+          ),
         ),
       ),
     );
