@@ -1,10 +1,16 @@
+
+
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/services/remote_services.dart';
 import 'package:forum/views/app_bar.dart';
 import 'package:forum/views/home_page.dart';
 import 'package:forum/views/user_page.dart';
+import 'package:image_picker/image_picker.dart';
 
 class UpdateProfileWidget extends StatefulWidget {
   @override
@@ -13,6 +19,19 @@ class UpdateProfileWidget extends StatefulWidget {
 
 class UpdateProfileWidgetState extends State<UpdateProfileWidget>{
   final controller = TextEditingController();
+  File? image;
+
+  Future pickImage() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if(image == null) return;
+      final imageTemp = File(image.path);
+      setState(() => this.image = imageTemp);
+    } on PlatformException catch(e) {
+      print('Failed to pick image: $e');
+    }
+  }
+
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
@@ -30,7 +49,18 @@ class UpdateProfileWidgetState extends State<UpdateProfileWidget>{
             const SizedBox(height: 20),
             const Text('Update Profile'),
             const SizedBox(height: 20),
-             TextField(
+            if(image != null)
+              CircleAvatar(
+                radius: 70,
+                backgroundImage: FileImage(image!),
+              ),
+            ElevatedButton(
+              onPressed: () {
+                pickImage();
+              },
+              child: const Text('Upload Image'),
+            ),
+            TextField(
               controller: controller,
               decoration: const InputDecoration(
                 labelText: 'Bio',
@@ -46,6 +76,7 @@ class UpdateProfileWidgetState extends State<UpdateProfileWidget>{
             ),
             ElevatedButton(
               onPressed: ()  {
+                  remoteService.uploadImage(image!);
                   remoteService.updateBio(controller.text).then((value) {
                     localServices.getUserId().then((value)
                     {
