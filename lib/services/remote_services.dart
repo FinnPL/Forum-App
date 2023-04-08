@@ -52,7 +52,7 @@ class RemoteService {
   }
 
   Future<AuthResponse> getToken(String userName, String password) async {
-    var url = Uri.parse('${apiUrl}auth/authenticate');
+    var url = Uri.parse('${apiUrl}auth/login');
     final body = jsonEncode(
         Auth(userName: userName, password: password).toJson());
     headers.remove('Authorization');
@@ -71,7 +71,7 @@ class RemoteService {
   }
 
   Future<Post> addPost({required String title, required String content}) async {
-    var url = Uri.parse('${apiUrl}post/add');
+    var url = Uri.parse('${apiUrl}post');
     var token = await localServices.getToken();
     headers.addAll({'Authorization': 'Bearer $token'});
 
@@ -129,7 +129,7 @@ class RemoteService {
   }
 
   Future<List<Comment>> getComments(int page, String postId) async {
-    var url = Uri.parse('${apiUrl}comment/get/$postId/$page');
+    var url = Uri.parse('${apiUrl}comment/$postId/$page');
     var token = await localServices.getToken();
     headers.addAll({'Authorization': 'Bearer $token'});
     var response = await http.get(url, headers: headers);
@@ -142,7 +142,7 @@ class RemoteService {
   }
 
   Future<bool> addComment(String id, String text) async {
-    var url = Uri.parse('${apiUrl}comment/add/');
+    var url = Uri.parse('${apiUrl}comment');
     var token = await localServices.getToken();
     headers.addAll({'Authorization': 'Bearer $token'});
     var response = await http.post(url, headers: headers, body: jsonEncode(
@@ -197,7 +197,7 @@ class RemoteService {
   }
 
   Future<void> deletePost(String id) async {
-    var url = Uri.parse('${apiUrl}post/del/$id');
+    var url = Uri.parse('${apiUrl}post/$id');
     var token = await localServices.getToken();
     headers.addAll({'Authorization': 'Bearer $token'});
     var response = await http.delete(url, headers: headers);
