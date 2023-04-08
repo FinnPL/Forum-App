@@ -15,7 +15,7 @@ import 'package:http_parser/http_parser.dart';
 final LocalServices localServices = LocalServices();
 
 class RemoteService {
-  final apiUrl = 'http://68.219.219.183:8080/api/v1/';
+  final apiUrl = 'http://192.168.178.54:8080/api/v1/';
 
   var headers = {
     'Content-Type': 'application/json',

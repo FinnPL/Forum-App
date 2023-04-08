@@ -140,7 +140,7 @@ class editPostPageState extends State<EditPostPage> {
                           widget.post.title = titel;
                           widget.post.content = content;
                           RemoteService().updatePost(widget.post.id,widget.post);
-                          RemoteService().uploadImage(image!,widget.post.id);
+                          if(image != null) RemoteService().uploadImage(image!,widget.post.id);
                           //return to home page
                           Navigator.of(context).pop();
                           //reload post page with new post
