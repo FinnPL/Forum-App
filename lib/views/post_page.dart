@@ -303,7 +303,13 @@ class FullScreenImage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () async{
           final tempDir = await getTemporaryDirectory();
-          final file = File('${tempDir.path}/image.png');
+          String fileExtension = 'jpg';
+          if (image[0] == 0x47) {
+            fileExtension = 'gif';
+          } else if (image[0] == 0x89) {
+            fileExtension = 'png';
+          }
+          final file = File('${tempDir.path}/image.$fileExtension');
           await file.writeAsBytes(image);
           Share.shareXFiles([XFile(file.path)]);
         },
