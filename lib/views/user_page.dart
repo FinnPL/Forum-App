@@ -131,10 +131,11 @@ class UserPageState extends State<UserPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Hero(tag: profilePicture, child:
                 CircleAvatar(
                   radius: 90,
                   backgroundImage: profilePicture.image,
-                ),
+                )),
                 const SizedBox(height: 16),
                 Text(
                   user?.userName ?? "",

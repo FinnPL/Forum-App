@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:forum/models/comment.dart';
 import 'package:forum/models/post.dart';
@@ -8,6 +10,8 @@ import 'package:forum/views/app_bar.dart';
 import 'package:forum/views/comment_list_view.dart';
 import 'package:forum/views/home_page.dart';
 import 'package:forum/views/user_page.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class FullScreenPostWidget extends StatefulWidget {
   final Post post;
@@ -27,6 +31,7 @@ class FullScreenPostWidgetState extends State<FullScreenPostWidget> {
   TextEditingController commentController = TextEditingController();
   bool isOwnPost = false;
   Image? image;
+  Uint8List? imageBytes;
 
   @override
   void dispose() {
@@ -45,6 +50,7 @@ class FullScreenPostWidgetState extends State<FullScreenPostWidget> {
   getData() async {
     RemoteService().getPostPicture(post.id).then((value) {
       setState(() {
+        imageBytes = value;
         image = Image.memory(value);
       });
     });
@@ -166,8 +172,21 @@ class FullScreenPostWidgetState extends State<FullScreenPostWidget> {
                     if (image != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 16),
-                        child: image!,
+                        child:  GestureDetector(
+                          onTap: () async {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FullScreenImage(image: imageBytes!),
+                              ),
+                            );
+                          },
+                          child: Hero(
+                            tag: 'imageHero',
+                            child: image!,
+                          ),
                       ),
+                    ),
                   ],
                 ),
               ),
@@ -249,6 +268,47 @@ class FullScreenPostWidgetState extends State<FullScreenPostWidget> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class FullScreenImage extends StatelessWidget {
+  final Uint8List  image;
+
+  const FullScreenImage({super.key, required this.image});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Palette.BlueToDark,
+      appBar: buildAppBar(context),
+      body: SizedBox(
+        width: double.infinity,
+        height: double.infinity,
+        child: InteractiveViewer(
+          maxScale: 10.0,
+          minScale: 0.75,
+          boundaryMargin: const EdgeInsets.all(30.0),
+          scaleEnabled: true,
+          constrained: true,
+          child: Hero(
+            tag: 'imageHero',
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: Image.memory(image),
+              ),
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async{
+          final tempDir = await getTemporaryDirectory();
+          final file = File('${tempDir.path}/image.png');
+          await file.writeAsBytes(image);
+          Share.shareXFiles([XFile(file.path)]);
+        },
+        tooltip: 'Share Image',
+        child: const Icon(Icons.share),
       ),
     );
   }

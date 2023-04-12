@@ -72,10 +72,11 @@ class UpdateProfileWidgetState extends State<UpdateProfileWidget>{
                 backgroundImage: FileImage(image!),
               )
               else
-               CircleAvatar(
-                radius: 90,
-                backgroundImage: profilePicture?.image,
-              )
+              Hero(tag: profilePicture!, child:
+                  CircleAvatar(
+                  radius: 90,
+                  backgroundImage: profilePicture?.image,
+            ))
             ,
             ElevatedButton.icon(
               onPressed: () {
