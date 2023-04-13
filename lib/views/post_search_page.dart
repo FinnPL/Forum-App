@@ -23,7 +23,6 @@ class PostPageState extends State<PostPage> {
   int page = 0;
   bool end = false;
 
-
   @override
   void initState() {
     super.initState();
@@ -31,7 +30,7 @@ class PostPageState extends State<PostPage> {
   }
 
   getData() async {
-    posts = await remoteService.search(widget.search,0);
+    posts = await remoteService.search(widget.search, 0);
     if (posts != null) {
       setState(() {
         isLoaded = true;
@@ -41,10 +40,10 @@ class PostPageState extends State<PostPage> {
 
   addNextPage() {
     page++;
-    remoteService.search(widget.search,page).then((value) => setState(() {
-      posts!.addAll(value!);
-      if (value.isEmpty) end = true;
-    }));
+    remoteService.search(widget.search, page).then((value) => setState(() {
+          posts!.addAll(value!);
+          if (value.isEmpty) end = true;
+        }));
   }
 
   @override
@@ -74,30 +73,30 @@ class PostPageState extends State<PostPage> {
             ),
             Expanded(
               child: Visibility(
-              visible: isLoaded,
-              replacement: const Center(
-                child: CircularProgressIndicator(),
-              ),
-              child: ListView.builder(
-                itemBuilder: (context, index) {
-                  int? postLength = posts?.length;
+                visible: isLoaded,
+                replacement: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+                child: ListView.builder(
+                  itemBuilder: (context, index) {
+                    int? postLength = posts?.length;
 
-                  if (index == postLength && !end) {
-                    addNextPage();
-                    return Container(
-                      padding: const EdgeInsets.all(16),
-                      child: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  } else if (index < postLength!) {
-                    final post = posts![index];
-                    return PostWidget(post: post);
-                  }
-                  return null;
-                },
+                    if (index == postLength && !end) {
+                      addNextPage();
+                      return Container(
+                        padding: const EdgeInsets.all(16),
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    } else if (index < postLength!) {
+                      final post = posts![index];
+                      return PostWidget(post: post);
+                    }
+                    return null;
+                  },
+                ),
               ),
-            ),
             ),
           ],
         ),

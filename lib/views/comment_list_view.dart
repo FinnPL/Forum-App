@@ -35,14 +35,14 @@ class CommentWidget extends StatelessWidget {
               const SizedBox(width: 4),
               GestureDetector(
                 onTap: () {
-                   Navigator.push(
-                     context,
-                     MaterialPageRoute(
-                       builder: (context) => UserPage(
-                          userId: comment.userId,
-                       ),
-                     ),
-                   );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => UserPage(
+                        userId: comment.userId,
+                      ),
+                    ),
+                  );
                 },
                 child: Text(
                   comment.userName,

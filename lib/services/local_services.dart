@@ -3,20 +3,27 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 const storage = FlutterSecureStorage();
 
 class LocalServices {
-  Future<String?> getUserName() async{
+  Future<String?> getUserName() async {
     return await storage.readAll().then((value) => value['user_name']);
   }
 
-  Future<String?> getUserId() async{
+  Future<String?> getUserId() async {
     return await storage.readAll().then((value) => value['user_id']);
   }
 
-  Future<String?> getToken() async{
+  Future<String?> getToken() async {
     return await storage.readAll().then((value) => value['token']);
   }
 
-  Future<String?> getExpiration() async{
+  Future<String?> getExpiration() async {
     return await storage.readAll().then((value) => value['expiration']);
+  }
+
+  Future<bool> isAuth() async {
+    if ((await getToken() != null) &&
+        (DateTime.parse((await getExpiration())!).isAfter(DateTime.now())))
+      return true;
+    return false;
   }
 
   Future<void> writeUserData(
@@ -26,9 +33,11 @@ class LocalServices {
     await storage.write(key: 'token', value: token);
     await storage.write(key: 'expiration', value: expiration);
   }
+
   deleteUserData() async {
     await storage.deleteAll();
   }
+
   String getFormatedDate(DateTime date) {
     String formatedDate = '';
     if (date.isAfter(DateTime.now().subtract(const Duration(days: 1)))) {

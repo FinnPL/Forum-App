@@ -1,5 +1,3 @@
-
-
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -14,25 +12,28 @@ import 'package:image_picker/image_picker.dart';
 class UpdateProfileWidget extends StatefulWidget {
   final Image profilePicture;
   final String bio;
-  const UpdateProfileWidget({Key? key, required this.profilePicture, required this.bio}) : super(key: key);
+  const UpdateProfileWidget(
+      {Key? key, required this.profilePicture, required this.bio})
+      : super(key: key);
   @override
   UpdateProfileWidgetState createState() => UpdateProfileWidgetState();
 }
 
-class UpdateProfileWidgetState extends State<UpdateProfileWidget>{
+class UpdateProfileWidgetState extends State<UpdateProfileWidget> {
   final controller = TextEditingController();
   File? image;
   Image? profilePicture;
   Future pickImage() async {
     try {
       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if(image == null) return;
+      if (image == null) return;
       final imageTemp = File(image.path);
       setState(() => this.image = imageTemp);
-    } on PlatformException catch(e) {
+    } on PlatformException catch (e) {
       print('Failed to pick image: $e');
     }
   }
+
   @override
   void initState() {
     super.initState();
@@ -66,18 +67,18 @@ class UpdateProfileWidgetState extends State<UpdateProfileWidget>{
               ),
             ),
             const SizedBox(height: 10),
-            if(image != null)
+            if (image != null)
               CircleAvatar(
                 radius: 90,
                 backgroundImage: FileImage(image!),
               )
-              else
-              Hero(tag: profilePicture!, child:
-                  CircleAvatar(
-                  radius: 90,
-                  backgroundImage: profilePicture?.image,
-            ))
-            ,
+            else
+              Hero(
+                  tag: profilePicture!,
+                  child: CircleAvatar(
+                    radius: 90,
+                    backgroundImage: profilePicture?.image,
+                  )),
             ElevatedButton.icon(
               onPressed: () {
                 pickImage();
@@ -91,8 +92,8 @@ class UpdateProfileWidgetState extends State<UpdateProfileWidget>{
               controller: controller,
               decoration: const InputDecoration(
                 labelText: 'Bio',
-                labelStyle: TextStyle(
-                    color: Palette.OrangeToDark, fontSize: 20),
+                labelStyle:
+                    TextStyle(color: Palette.OrangeToDark, fontSize: 20),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Palette.OrangeToDark),
                 ),
@@ -100,22 +101,18 @@ class UpdateProfileWidgetState extends State<UpdateProfileWidget>{
                   borderSide: BorderSide(color: Palette.OrangeToDark),
                 ),
               ),
-
             ),
-            const SizedBox(height:10),
+            const SizedBox(height: 10),
             ElevatedButton.icon(
               label: const Text('Confirm'),
               icon: const Icon(Icons.save),
-              onPressed: ()  {
-                  if (image != null) remoteService.uploadProfileImage(image!);
-                  remoteService.updateBio(controller.text).then((value) {
-                    localServices.getUserId().then((value)
-                    {
-                      Navigator.pop(context);
-                    }
-                    );
-                  }
-                  );
+              onPressed: () {
+                if (image != null) remoteService.uploadProfileImage(image!);
+                remoteService.updateBio(controller.text).then((value) {
+                  localServices.getUserId().then((value) {
+                    Navigator.pop(context);
+                  });
+                });
               },
             ),
           ],
@@ -123,5 +120,4 @@ class UpdateProfileWidgetState extends State<UpdateProfileWidget>{
       ),
     );
   }
-
 }

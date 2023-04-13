@@ -38,6 +38,7 @@ dependencies:
   http_parser: ^4.0.2
   share_plus: ^6.3.2
   path_provider: ^2.0.14
+  go_router: ^6.5.6
 
 
 

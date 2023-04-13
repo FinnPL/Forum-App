@@ -5,6 +5,7 @@ import 'package:forum/services/remote_services.dart';
 import 'package:forum/views/editPostPage.dart';
 import 'package:forum/views/search_page.dart';
 import 'package:forum/views/user_page.dart';
+import 'package:go_router/go_router.dart';
 
 AppBar buildAppBar(BuildContext context) {
   return AppBar(
@@ -49,19 +50,15 @@ AppBar buildMainAppBar(BuildContext context) {
     ),
     actions: [
       IconButton(
-          onPressed: () => Navigator.of(context)
-              .push(MaterialPageRoute(builder: (_) => const SearchPage())),
+          onPressed: () => context.pushNamed('search'),
           icon: const Icon(Icons.search),
           color: Palette.BlueToLight[400]),
       IconButton(
         onPressed: () {
-          localServices.getUserId().then((value)
-          {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (_) =>  UserPage(userId: value!))
-            );
-          }
-          );
+          localServices.getUserId().then((value) {
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => UserPage(userId: value!)));
+          });
         },
         icon: const Icon(Icons.person),
         color: Palette.BlueToLight[400],
@@ -69,7 +66,6 @@ AppBar buildMainAppBar(BuildContext context) {
     ],
   );
 }
-
 
 AppBar buildEditAppBar(BuildContext context, Post post, Image? image) {
   return AppBar(
@@ -100,43 +96,43 @@ AppBar buildEditAppBar(BuildContext context, Post post, Image? image) {
         color: Palette.BlueToLight[400],
         onPressed: () {
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => EditPostPage(post: post, image: image)),
+            MaterialPageRoute(
+                builder: (_) => EditPostPage(post: post, image: image)),
           );
-
         },
       ),
       IconButton(
-        icon: const Icon(Icons.delete),
-        color: Palette.BlueToLight[400],
-        onPressed: () {
-          //Show popup
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text("Delete Post"),
-                content: const Text("Are you sure you want to delete this post?"),
-                actions: [
-                  TextButton(
-                    child: const Text("Cancel"),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  TextButton(
-                    child: const Text("Delete"),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pop();
-                      RemoteService().deletePost(post.id);
-                    },
-                  ),
-                ],
-              );
-            },
-          );
-        }
-      )
+          icon: const Icon(Icons.delete),
+          color: Palette.BlueToLight[400],
+          onPressed: () {
+            //Show popup
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text("Delete Post"),
+                  content:
+                      const Text("Are you sure you want to delete this post?"),
+                  actions: [
+                    TextButton(
+                      child: const Text("Cancel"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    TextButton(
+                      child: const Text("Delete"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                        RemoteService().deletePost(post.id);
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          })
     ],
   );
 }

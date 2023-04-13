@@ -10,15 +10,14 @@ import 'package:forum/views/post_page.dart';
 import 'package:image_picker/image_picker.dart';
 
 class EditPostPage extends StatefulWidget {
-  const EditPostPage({Key? key, required this.post, required this.image}) : super(key: key);
+  const EditPostPage({Key? key, required this.post, required this.image})
+      : super(key: key);
   final Post post;
   final Image? image;
 
   @override
   editPostPageState createState() => editPostPageState();
 }
-
-
 
 class editPostPageState extends State<EditPostPage> {
   final titleController = TextEditingController();
@@ -28,13 +27,14 @@ class editPostPageState extends State<EditPostPage> {
   Future pickImage() async {
     try {
       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if(image == null) return;
+      if (image == null) return;
       final imageTemp = File(image.path);
       setState(() => this.image = imageTemp);
-    } on PlatformException catch(e) {
-     rethrow;
+    } on PlatformException catch (e) {
+      rethrow;
     }
   }
+
   @override
   void initState() {
     super.initState();
@@ -112,7 +112,11 @@ class editPostPageState extends State<EditPostPage> {
                       style: const TextStyle(color: Colors.white),
                     ),
                     const SizedBox(height: 16),
-                    if (image != null)Padding(padding: const EdgeInsets.only(top: 16), child: Image.file(image!),)
+                    if (image != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Image.file(image!),
+                      )
                     else if (prevImage != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 16),
@@ -134,17 +138,24 @@ class editPostPageState extends State<EditPostPage> {
                             ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content:
-                                    Text('Please fill in all fields')));
+                                        Text('Please fill in all fields')));
                             return;
                           }
                           widget.post.title = titel;
                           widget.post.content = content;
-                          RemoteService().updatePost(widget.post.id,widget.post);
-                          if(image != null) RemoteService().uploadImage(image!,widget.post.id);
+                          RemoteService()
+                              .updatePost(widget.post.id, widget.post);
+                          if (image != null)
+                            RemoteService().uploadImage(image!, widget.post.id);
                           //return to home page
                           Navigator.of(context).pop();
                           //reload post page with new post
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => FullScreenPostWidget(post: widget.post,)));
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => FullScreenPostWidget(
+                                        post: widget.post,
+                                      )));
                         },
                         icon: const Icon(Icons.post_add),
                         label: const Text('Update Post')),

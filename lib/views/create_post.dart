@@ -21,11 +21,11 @@ class AddPostWidgetState extends State<AddPostWidget> {
   Future pickImage() async {
     try {
       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if(image == null) return;
+      if (image == null) return;
       final imageTemp = File(image.path);
       setState(() => this.image = imageTemp);
-    } on PlatformException catch(e) {
-     rethrow;
+    } on PlatformException catch (e) {
+      rethrow;
     }
   }
 
@@ -101,16 +101,16 @@ class AddPostWidgetState extends State<AddPostWidget> {
                     const SizedBox(height: 16),
                     if (image != null)
                       Padding(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: Image.file(image!),
-                        ),
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          pickImage();
-                        },
-                        label: const Text('Upload Picture'),
-                        icon: const Icon(Icons.image),
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Image.file(image!),
                       ),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        pickImage();
+                      },
+                      label: const Text('Upload Picture'),
+                      icon: const Icon(Icons.image),
+                    ),
                     const SizedBox(height: 16),
                     ElevatedButton.icon(
                         onPressed: () async {
@@ -121,18 +121,21 @@ class AddPostWidgetState extends State<AddPostWidget> {
                             ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content:
-                                    Text('Please fill in all fields')));
+                                        Text('Please fill in all fields')));
                             return;
                           }
-                          remoteService.addPost(
-                            title: titel,
-                            content: content,
-                          ).then((value) => {
-                              if (image != null) {
-                              remoteService.uploadImage(
-                                  image!, value.id)
-                          }
-                          });
+                          remoteService
+                              .addPost(
+                                title: titel,
+                                content: content,
+                              )
+                              .then((value) => {
+                                    if (image != null)
+                                      {
+                                        remoteService.uploadImage(
+                                            image!, value.id)
+                                      }
+                                  });
                           Navigator.of(context).pop();
                         },
                         icon: const Icon(Icons.send),

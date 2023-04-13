@@ -3,6 +3,7 @@ import 'package:forum/models/post.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/services/local_services.dart';
 import 'package:forum/views/post_page.dart';
+import 'package:go_router/go_router.dart';
 
 class PostWidget extends StatelessWidget {
   final Post post;
@@ -22,7 +23,7 @@ class PostWidget extends StatelessWidget {
         ),
         child: ListTile(
           contentPadding:
-          const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           title: Text(
             post.title,
             maxLines: 2,
@@ -50,7 +51,7 @@ class PostWidget extends StatelessWidget {
             ],
           ),
           trailing:
-          const Icon(Icons.arrow_forward_ios, color: Palette.BlueToDark),
+              const Icon(Icons.arrow_forward_ios, color: Palette.BlueToDark),
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
               builder: (_) => FullScreenPostWidget(
