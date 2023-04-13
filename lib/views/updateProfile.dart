@@ -56,7 +56,7 @@ class UpdateProfileWidgetState extends State<UpdateProfileWidget> {
       appBar: buildAppBar(context),
       body: Container(
         padding: const EdgeInsets.all(20),
-        color: Palette.BlueToLight[50],
+        color: Palette.BlueToLight,
         child: Column(
           children: [
             const SizedBox(height: 20),

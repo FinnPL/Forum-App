@@ -3,7 +3,6 @@ import 'package:forum/models/post.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/services/remote_services.dart';
 import 'package:forum/views/editPostPage.dart';
-import 'package:forum/views/user_page.dart';
 import 'package:go_router/go_router.dart';
 
 AppBar buildAppBar(BuildContext context) {
@@ -55,8 +54,7 @@ AppBar buildMainAppBar(BuildContext context) {
       IconButton(
         onPressed: () {
           localServices.getUserId().then((value) {
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => UserPage(userId: value!)));
+            context.pushNamed('user', params: {'id': value.toString()});
           });
         },
         icon: const Icon(Icons.person),
