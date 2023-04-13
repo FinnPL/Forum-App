@@ -272,7 +272,6 @@ class RemoteService {
   }
 
   Future<Post> getPost(String id) async {
-    print(id);
     var url = Uri.parse('${apiUrl}post/$id');
     var token = await localServices.getToken();
     headers.addAll({'Authorization': 'Bearer $token'});

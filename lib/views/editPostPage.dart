@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:forum/models/post.dart';
@@ -16,10 +17,10 @@ class EditPostPage extends StatefulWidget {
   final Image? image;
 
   @override
-  editPostPageState createState() => editPostPageState();
+  EditPostPageState createState() => EditPostPageState();
 }
 
-class editPostPageState extends State<EditPostPage> {
+class EditPostPageState extends State<EditPostPage> {
   final titleController = TextEditingController();
   final contentController = TextEditingController();
   File? image;
@@ -31,7 +32,9 @@ class editPostPageState extends State<EditPostPage> {
       final imageTemp = File(image.path);
       setState(() => this.image = imageTemp);
     } on PlatformException catch (e) {
-      rethrow;
+      if (kDebugMode) {
+        print('Failed to pick image: $e');
+      }
     }
   }
 
@@ -131,9 +134,9 @@ class editPostPageState extends State<EditPostPage> {
                     ),
                     ElevatedButton.icon(
                         onPressed: () async {
-                          var titel = titleController.text;
+                          var title = titleController.text;
                           var content = contentController.text;
-                          if (titel.isEmpty | content.isEmpty) {
+                          if (title.isEmpty | content.isEmpty) {
                             //show error message
                             ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -141,12 +144,13 @@ class editPostPageState extends State<EditPostPage> {
                                         Text('Please fill in all fields')));
                             return;
                           }
-                          widget.post.title = titel;
+                          widget.post.title = title;
                           widget.post.content = content;
                           RemoteService()
                               .updatePost(widget.post.id, widget.post);
-                          if (image != null)
+                          if (image != null) {
                             RemoteService().uploadImage(image!, widget.post.id);
+                          }
                           //return to home page
                           Navigator.of(context).pop();
                           //reload post page with new post

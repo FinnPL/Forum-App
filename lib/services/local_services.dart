@@ -21,8 +21,9 @@ class LocalServices {
 
   Future<bool> isAuth() async {
     if ((await getToken() != null) &&
-        (DateTime.parse((await getExpiration())!).isAfter(DateTime.now())))
+        (DateTime.parse((await getExpiration())!).isAfter(DateTime.now()))) {
       return true;
+    }
     return false;
   }
 
@@ -38,21 +39,21 @@ class LocalServices {
     await storage.deleteAll();
   }
 
-  String getFormatedDate(DateTime date) {
-    String formatedDate = '';
+  String getFormattedDate(DateTime date) {
+    String formattedDate = '';
     if (date.isAfter(DateTime.now().subtract(const Duration(days: 1)))) {
-      formatedDate = '${date.hour}:';
+      formattedDate = '${date.hour}:';
       if (date.hour < 10) {
-        formatedDate = '0$formatedDate';
+        formattedDate = '0$formattedDate';
       }
       if (date.minute < 10) {
-        formatedDate = '${formatedDate}0${date.minute}';
+        formattedDate = '${formattedDate}0${date.minute}';
       } else {
-        formatedDate = '$formatedDate${date.minute}';
+        formattedDate = '$formattedDate${date.minute}';
       }
     } else {
-      formatedDate = '${date.day}/${date.month}/${date.year}';
+      formattedDate = '${date.day}/${date.month}/${date.year}';
     }
-    return formatedDate;
+    return formattedDate;
   }
 }

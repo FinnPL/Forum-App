@@ -10,7 +10,6 @@ import 'package:forum/views/post_list_view.dart';
 import 'package:forum/views/updateProfile.dart';
 import 'package:go_router/go_router.dart';
 
-import 'login_page.dart';
 
 class UserPage extends StatefulWidget {
   final String userId;

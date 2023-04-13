@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:forum/palette.dart';
@@ -30,7 +30,9 @@ class UpdateProfileWidgetState extends State<UpdateProfileWidget> {
       final imageTemp = File(image.path);
       setState(() => this.image = imageTemp);
     } on PlatformException catch (e) {
-      print('Failed to pick image: $e');
+      if (kDebugMode) {
+        print('Failed to pick image: $e');
+      }
     }
   }
 

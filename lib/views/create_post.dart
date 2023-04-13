@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:forum/palette.dart';
@@ -25,7 +26,9 @@ class AddPostWidgetState extends State<AddPostWidget> {
       final imageTemp = File(image.path);
       setState(() => this.image = imageTemp);
     } on PlatformException catch (e) {
-      rethrow;
+      if (kDebugMode) {
+        print('Failed to pick image: $e');
+      }
     }
   }
 
@@ -114,9 +117,9 @@ class AddPostWidgetState extends State<AddPostWidget> {
                     const SizedBox(height: 16),
                     ElevatedButton.icon(
                         onPressed: () async {
-                          var titel = titleController.text;
+                          var title = titleController.text;
                           var content = contentController.text;
-                          if (titel.isEmpty | content.isEmpty) {
+                          if (title.isEmpty | content.isEmpty) {
                             //show error message
                             ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -126,7 +129,7 @@ class AddPostWidgetState extends State<AddPostWidget> {
                           }
                           remoteService
                               .addPost(
-                                title: titel,
+                                title: title,
                                 content: content,
                               )
                               .then((value) => {

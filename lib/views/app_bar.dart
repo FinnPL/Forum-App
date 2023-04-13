@@ -3,7 +3,6 @@ import 'package:forum/models/post.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/services/remote_services.dart';
 import 'package:forum/views/editPostPage.dart';
-import 'package:forum/views/search_page.dart';
 import 'package:forum/views/user_page.dart';
 import 'package:go_router/go_router.dart';
 

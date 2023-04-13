@@ -14,7 +14,7 @@ class CommentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String date = LocalServices().getFormatedDate(comment.date);
+    String date = LocalServices().getFormattedDate(comment.date);
     return Container(
       decoration: BoxDecoration(
         color: Palette.BlueToLight[400],

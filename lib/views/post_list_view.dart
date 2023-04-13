@@ -3,7 +3,6 @@ import 'package:forum/models/post.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/services/local_services.dart';
 import 'package:forum/views/post_page.dart';
-import 'package:go_router/go_router.dart';
 
 class PostWidget extends StatelessWidget {
   final Post post;
@@ -12,7 +11,7 @@ class PostWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String date = LocalServices().getFormatedDate(post.date);
+    String date = LocalServices().getFormattedDate(post.date);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
