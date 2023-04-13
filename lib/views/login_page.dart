@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:forum/palette.dart';
 import 'package:forum/views/home_page.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
   LoginPageState createState() => LoginPageState();
-
 }
 
 class LoginPageState extends State<LoginPage> {
@@ -30,7 +30,6 @@ class LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -89,11 +88,11 @@ class LoginPageState extends State<LoginPage> {
                       ),
                       style: const TextStyle(color: Colors.white),
                     ),
-                     const SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     TextField(
                       obscureText: _obscureText,
                       controller: passwordController,
-                      decoration:  InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Password',
                         labelStyle: const TextStyle(
                             color: Palette.OrangeToDark, fontSize: 20),
@@ -104,24 +103,21 @@ class LoginPageState extends State<LoginPage> {
                           borderSide: BorderSide(color: Palette.OrangeToDark),
                         ),
                         suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscureText
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: Palette.OrangeToDark,
+                          icon: Icon(
+                            _obscureText
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Palette.OrangeToDark,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscureText = !_obscureText;
+                            });
+                          },
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _obscureText = !_obscureText;
-                          });
-                        },
-                        ),
-
-                        ),
+                      ),
                       style: const TextStyle(color: Colors.white),
                     ),
-
-
                     const SizedBox(height: 16),
                     ElevatedButton.icon(
                         onPressed: () async {
@@ -132,10 +128,7 @@ class LoginPageState extends State<LoginPage> {
                             await remoteService
                                 .getToken(userController.text,
                                     passwordController.text)
-                                .then((value) => Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const HomePage())));
+                                .then((value) => context.go('/home'));
                           }
                         },
                         icon: const Icon(Icons.login),

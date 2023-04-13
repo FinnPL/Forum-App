@@ -11,7 +11,7 @@ class PostWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String date = LocalServices().getFormatedDate(post.date);
+    String date = LocalServices().getFormattedDate(post.date);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -22,7 +22,7 @@ class PostWidget extends StatelessWidget {
         ),
         child: ListTile(
           contentPadding:
-          const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           title: Text(
             post.title,
             maxLines: 2,
@@ -50,7 +50,7 @@ class PostWidget extends StatelessWidget {
             ],
           ),
           trailing:
-          const Icon(Icons.arrow_forward_ios, color: Palette.BlueToDark),
+              const Icon(Icons.arrow_forward_ios, color: Palette.BlueToDark),
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
               builder: (_) => FullScreenPostWidget(

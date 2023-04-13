@@ -73,14 +73,12 @@ class SearchPageState extends State<SearchPage> {
                             ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content:
-                                    Text('Please fill in all fields')));
+                                        Text('Please fill in all fields')));
                             return;
                           }
 
-
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  PostPage(search: search)));
+                              builder: (context) => PostPage(search: search)));
                         },
                         icon: const Icon(Icons.search),
                         label: const Text('Search')),

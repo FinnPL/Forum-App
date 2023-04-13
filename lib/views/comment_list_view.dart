@@ -14,7 +14,7 @@ class CommentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String date = LocalServices().getFormatedDate(comment.date);
+    String date = LocalServices().getFormattedDate(comment.date);
     return Container(
       decoration: BoxDecoration(
         color: Palette.BlueToLight[400],
@@ -35,14 +35,14 @@ class CommentWidget extends StatelessWidget {
               const SizedBox(width: 4),
               GestureDetector(
                 onTap: () {
-                   Navigator.push(
-                     context,
-                     MaterialPageRoute(
-                       builder: (context) => UserPage(
-                          userId: comment.userId,
-                       ),
-                     ),
-                   );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => UserPage(
+                        userId: comment.userId,
+                      ),
+                    ),
+                  );
                 },
                 child: Text(
                   comment.userName,

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:forum/models/post.dart';
@@ -10,17 +11,16 @@ import 'package:forum/views/post_page.dart';
 import 'package:image_picker/image_picker.dart';
 
 class EditPostPage extends StatefulWidget {
-  const EditPostPage({Key? key, required this.post, required this.image}) : super(key: key);
+  const EditPostPage({Key? key, required this.post, required this.image})
+      : super(key: key);
   final Post post;
   final Image? image;
 
   @override
-  editPostPageState createState() => editPostPageState();
+  EditPostPageState createState() => EditPostPageState();
 }
 
-
-
-class editPostPageState extends State<EditPostPage> {
+class EditPostPageState extends State<EditPostPage> {
   final titleController = TextEditingController();
   final contentController = TextEditingController();
   File? image;
@@ -28,13 +28,16 @@ class editPostPageState extends State<EditPostPage> {
   Future pickImage() async {
     try {
       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if(image == null) return;
+      if (image == null) return;
       final imageTemp = File(image.path);
       setState(() => this.image = imageTemp);
-    } on PlatformException catch(e) {
-     rethrow;
+    } on PlatformException catch (e) {
+      if (kDebugMode) {
+        print('Failed to pick image: $e');
+      }
     }
   }
+
   @override
   void initState() {
     super.initState();
@@ -112,7 +115,11 @@ class editPostPageState extends State<EditPostPage> {
                       style: const TextStyle(color: Colors.white),
                     ),
                     const SizedBox(height: 16),
-                    if (image != null)Padding(padding: const EdgeInsets.only(top: 16), child: Image.file(image!),)
+                    if (image != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Image.file(image!),
+                      )
                     else if (prevImage != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 16),
@@ -127,24 +134,32 @@ class editPostPageState extends State<EditPostPage> {
                     ),
                     ElevatedButton.icon(
                         onPressed: () async {
-                          var titel = titleController.text;
+                          var title = titleController.text;
                           var content = contentController.text;
-                          if (titel.isEmpty | content.isEmpty) {
+                          if (title.isEmpty | content.isEmpty) {
                             //show error message
                             ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content:
-                                    Text('Please fill in all fields')));
+                                        Text('Please fill in all fields')));
                             return;
                           }
-                          widget.post.title = titel;
+                          widget.post.title = title;
                           widget.post.content = content;
-                          RemoteService().updatePost(widget.post.id,widget.post);
-                          if(image != null) RemoteService().uploadImage(image!,widget.post.id);
+                          RemoteService()
+                              .updatePost(widget.post.id, widget.post);
+                          if (image != null) {
+                            RemoteService().uploadImage(image!, widget.post.id);
+                          }
                           //return to home page
                           Navigator.of(context).pop();
                           //reload post page with new post
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => FullScreenPostWidget(post: widget.post,)));
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => FullScreenPostWidget(
+                                        post: widget.post,
+                                      )));
                         },
                         icon: const Icon(Icons.post_add),
                         label: const Text('Update Post')),

@@ -7,7 +7,6 @@ import 'package:forum/views/app_bar.dart';
 import 'package:forum/views/create_post.dart';
 import 'package:forum/views/post_list_view.dart';
 
-
 RemoteService remoteService = RemoteService();
 
 class HomePage extends StatefulWidget {
@@ -99,14 +98,3 @@ class HomePageState extends State<HomePage> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
